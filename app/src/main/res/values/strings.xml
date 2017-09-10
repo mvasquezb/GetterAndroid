@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Getter</string>
 
+    <!-- FB App -->
     <string name="facebook_application_id" translatable="false">1667303876644246</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb1667303876644246</string>
+    <!-- Twitter App -->
+    <string name="twitter_consumer_key" translatable="false">qaRXGRSPNFmPPJAWAg4qCb2vP</string>
+    <string name="twitter_consumer_secret" translatable="false">QIagOaKfb2SJxDaXNHS9FWtXsiBSYeVFqKYpvdwnF5Zjqwp15P</string>
 </resources>
