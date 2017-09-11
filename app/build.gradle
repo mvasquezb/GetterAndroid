@@ -1,3 +1,7 @@
+project.ext {
+    lifecycle = "1.0.0-alpha9"
+    constraintLayout = "1.0.2"
+}
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -33,10 +37,13 @@ dependencies {
     }
 
     compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "com.android.support.constraint:constraint-layout:$project.constraintLayout"
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
     compile 'com.google.firebase:firebase-auth:11.2.2'
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
+    compile "android.arch.lifecycle:runtime:$project.lifecycle"
+    compile "android.arch.lifecycle:extensions:$project.lifecycle"
+    annotationProcessor "android.arch.lifecycle:compiler:$project.lifecycle"
     testCompile 'junit:junit:4.12'
 }
 
