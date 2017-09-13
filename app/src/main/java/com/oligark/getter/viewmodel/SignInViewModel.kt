@@ -14,7 +14,7 @@ class SignInViewModel : ViewModel() {
         EMAIL
     }
 
-    fun doLogin(user: String, pass: String, provider: SIGNIN_PROVIDER) {
+    fun doLogin(provider: SIGNIN_PROVIDER, user: String = "", pass: String = "") {
 
     }
 }
