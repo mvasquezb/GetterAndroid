@@ -4,6 +4,7 @@ project.ext {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -22,6 +23,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -46,6 +50,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    kapt 'com.android.databinding:compiler:2.3.3'
 
     testCompile 'junit:junit:4.12'
 }
