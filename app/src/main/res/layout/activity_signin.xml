@@ -146,6 +146,7 @@
                 <Button
                     android:id="@+id/login_register_btn"
                     android:text="@string/login_register_btn"
+                    android:onClick="registerUser"
                     style="@style/AppTheme.LoginSecondaryButton" />
 
                 <Space
@@ -156,6 +157,7 @@
                 <Button
                     android:id="@+id/login_guest_btn"
                     android:text="@string/login_guest_btn"
+                    android:onClick="guestLogin"
                     style="@style/AppTheme.LoginSecondaryButton" />
 
             </LinearLayout>
