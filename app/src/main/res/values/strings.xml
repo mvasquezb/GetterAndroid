@@ -5,8 +5,8 @@
     <string name="facebook_application_id" translatable="false">1667303876644246</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb1667303876644246</string>
     <!-- Twitter App -->
-    <string name="twitter_consumer_key" translatable="false">qaRXGRSPNFmPPJAWAg4qCb2vP</string>
-    <string name="twitter_consumer_secret" translatable="false">QIagOaKfb2SJxDaXNHS9FWtXsiBSYeVFqKYpvdwnF5Zjqwp15P</string>
+    <string name="twitter_consumer_key" translatable="false">2rQzkDkFl694CJ2jIBLBxyG36</string>
+    <string name="twitter_consumer_secret" translatable="false">wciuBDzxrKa7bIYOuKi2ThiKu36INlDGXZjOl7s3Z2aRZeyfIS</string>
 
     <string name="login_user_hint">Usuario</string>
     <string name="login_password_hint">Contraseña</string>
