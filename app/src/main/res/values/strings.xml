@@ -7,6 +7,9 @@
     <!-- Twitter App -->
     <string name="twitter_consumer_key" translatable="false">2rQzkDkFl694CJ2jIBLBxyG36</string>
     <string name="twitter_consumer_secret" translatable="false">wciuBDzxrKa7bIYOuKi2ThiKu36INlDGXZjOl7s3Z2aRZeyfIS</string>
+    <!-- Google App -->
+    <string name="google_web_client_id">988397032639-capicj30m8thad0bjq1r5s6bgvfh4ir2.apps.googleusercontent.com</string>
+
 
     <string name="login_user_hint">Usuario</string>
     <string name="login_password_hint">Contraseña</string>
