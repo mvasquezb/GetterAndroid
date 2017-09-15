@@ -9,6 +9,10 @@ import android.widget.Toast
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.*
 
 import com.oligark.getter.R
@@ -24,13 +28,14 @@ class SignInActivity: LifecycleActivity() {
         val TAG = SignInActivity::class.java.simpleName
         @JvmField
         val AUTH_CREDENTIAL_KEY = "auth_credential"
+        @JvmField
+        val RC_GOOGLE_SIGN_IN = 12412
     }
 
     private lateinit var binding: ActivitySigninBinding
 //    private lateinit var viewModel: SignInViewModel
     private var credential: AuthCredential? = null
-    private var currentUser: FirebaseUser? = null
-
+    private lateinit var mGoogleApiClient: GoogleApiClient
 
     private val mFbCallbackManager: CallbackManager = CallbackManager.Factory.create()
 
@@ -77,7 +82,14 @@ class SignInActivity: LifecycleActivity() {
                 )
         ).build())
         mTwitterAuthClient = TwitterAuthClient()
-        TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.google_web_client_id))
+                .requestEmail()
+                .build()
+        mGoogleApiClient = GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -100,6 +112,16 @@ class SignInActivity: LifecycleActivity() {
             }
             return
         }
+
+        if (requestCode == RC_GOOGLE_SIGN_IN) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            if (result.isSuccess) {
+                val account = result.signInAccount
+                handleGoogleLogin(account!!)
+            } else {
+                Log.e(TAG, "Sign in failed")
+            }
+        }
     }
 
     private fun launchMainActivity() {
@@ -110,13 +132,39 @@ class SignInActivity: LifecycleActivity() {
         finish()
     }
 
+    private fun handleGoogleLogin(account: GoogleSignInAccount) {
+        credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential!!)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Google FirebaseSignInWithCredential success")
+                        launchMainActivity()
+                    } else {
+                        Log.e(TAG, "Google FirebaseSignInWithCredential error", task.exception)
+                        try {
+                            throw task.exception!!
+                        } catch (e: FirebaseAuthUserCollisionException) {
+                            handleUserCollision()
+                        }
+                    }
+                }
+    }
+
+
     private fun handleFbLogin(accessToken: AccessToken) {
         Log.d(TAG, "handleFbLogn: $accessToken")
         credential = FacebookAuthProvider.getCredential(accessToken.token)
         FirebaseAuth.getInstance().signInWithCredential(credential!!)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
                         Log.d(TAG, "Facebook FirebaseSignInWithCredential success")
+                    } else {
+                        Log.e(TAG, "Facebook FirebaseAuth exception", task.exception)
+                        try {
+                            throw task.exception!!
+                        } catch (e: FirebaseAuthUserCollisionException) {
+                            handleUserCollision()
+                        }
                     }
                 }
     }
@@ -131,7 +179,7 @@ class SignInActivity: LifecycleActivity() {
                     if (task.isSuccessful) {
                         Log.d(TAG, "Twitter FirebaseSignInWithCredential success")
                     } else {
-                        Log.e(TAG, "FirebaseAuth exception", task.exception)
+                        Log.e(TAG, "Twitter FirebaseAuth exception", task.exception)
                         try {
                             throw task.exception!!
                         } catch (e: FirebaseAuthUserCollisionException) {
@@ -199,7 +247,8 @@ class SignInActivity: LifecycleActivity() {
                 LoginManager.getInstance().logInWithReadPermissions(this, permissions)
             }
             SignInViewModel.SIGNIN_PROVIDER.GOOGLE -> {
-
+                val signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
+                startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
             }
             SignInViewModel.SIGNIN_PROVIDER.TWITTER -> {
                 Log.d(TAG, "Twitter provider clicked")
