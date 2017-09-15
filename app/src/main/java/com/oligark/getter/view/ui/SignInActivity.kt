@@ -197,6 +197,14 @@ class SignInActivity: LifecycleActivity() {
         ).show()
     }
 
+    private fun handleInvalidUser() {
+        Toast.makeText(
+                this,
+                "There's no user registered with those credentials. Please try again",
+                Toast.LENGTH_SHORT
+        ).show()
+    }
+
     fun forgottenPassword() {
         // Redirect to forgotten password screen
         Log.d(TAG, "Forgotten password clicked")
@@ -264,7 +272,20 @@ class SignInActivity: LifecycleActivity() {
                 })
             }
             SignInViewModel.SIGNIN_PROVIDER.EMAIL -> {
-
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(user, pass)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d(TAG, "Email login success")
+                                launchMainActivity()
+                            } else {
+                                Log.e(TAG, "Email login error", task.exception)
+                                try {
+                                    throw task.exception!!
+                                } catch (e: FirebaseAuthInvalidUserException) {
+                                    handleInvalidUser()
+                                }
+                            }
+                        }
             }
             SignInViewModel.SIGNIN_PROVIDER.GUEST -> {
                 FirebaseAuth.getInstance().signInAnonymously()
