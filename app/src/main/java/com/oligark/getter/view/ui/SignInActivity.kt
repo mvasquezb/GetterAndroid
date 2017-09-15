@@ -1,28 +1,26 @@
 package com.oligark.getter.view.ui
 
 import android.arch.lifecycle.LifecycleActivity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
+import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
 
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivitySigninBinding
 import com.oligark.getter.viewmodel.SignInViewModel
+import com.twitter.sdk.android.core.*
+import com.twitter.sdk.android.core.identity.TwitterAuthClient
 
-class SignInActivity : LifecycleActivity() {
+class SignInActivity: LifecycleActivity() {
 
     companion object {
         @JvmField
@@ -34,13 +32,23 @@ class SignInActivity : LifecycleActivity() {
     private lateinit var binding: ActivitySigninBinding
 //    private lateinit var viewModel: SignInViewModel
     private var credential: AuthCredential? = null
+    private var currentUser: FirebaseUser? = null
+
 
     private val mFbCallbackManager: CallbackManager = CallbackManager.Factory.create()
+
+    private lateinit var mTwitterAuthClient: TwitterAuthClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signin)
 //        viewModel = ViewModelProviders.of(this).get(SignInViewModel::class.java)
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            launchMainActivity()
+            return
+        }
+
         LoginManager.getInstance().registerCallback(
                 mFbCallbackManager,
                 object : FacebookCallback<LoginResult> {
@@ -56,19 +64,42 @@ class SignInActivity : LifecycleActivity() {
                     }
                 }
         )
+
+        Twitter.initialize(TwitterConfig.Builder(this).twitterAuthConfig(
+                TwitterAuthConfig(
+                        getString(R.string.twitter_consumer_key),
+                        getString(R.string.twitter_consumer_secret)
+                )
+        ).build())
+        mTwitterAuthClient = TwitterAuthClient()
+        TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "request code: $requestCode. result code: $resultCode")
+        if (FacebookSdk.isFacebookRequestCode(requestCode)) {
+            Log.d(TAG, "Facebook onActivityResult")
+            mFbCallbackManager.onActivityResult(requestCode, resultCode, data)
+            if (FirebaseAuth.getInstance().currentUser != null) {
+                launchMainActivity()
+            }
+            return
+        }
 
-        if (mFbCallbackManager.onActivityResult(requestCode, resultCode, data)) {
-            launchMainActivity()
+        if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
+            Log.d(TAG, "Twitter onActivityResult")
+            mTwitterAuthClient.onActivityResult(requestCode, resultCode, data)
+            if (FirebaseAuth.getInstance().currentUser != null) {
+                launchMainActivity()
+            }
             return
         }
     }
 
     private fun launchMainActivity() {
-        val mainIntent = Intent(this, MainActivity::class.java)
+        Log.d(TAG, "LaunchMainActivity")
+        val mainIntent = Intent(applicationContext, MainActivity::class.java)
         mainIntent.putExtra(AUTH_CREDENTIAL_KEY, credential)
         startActivity(mainIntent)
         finish()
@@ -80,9 +111,37 @@ class SignInActivity : LifecycleActivity() {
         FirebaseAuth.getInstance().signInWithCredential(credential!!)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Log.d(TAG, "FirebaseSignInWithCredential success")
+                        Log.d(TAG, "Facebook FirebaseSignInWithCredential success")
                     }
                 }
+    }
+
+    private fun handleTwitterLogin(session: TwitterSession) {
+        credential = TwitterAuthProvider.getCredential(
+                session.authToken.token,
+                session.authToken.secret
+        )
+        FirebaseAuth.getInstance().signInWithCredential(credential!!)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Twitter FirebaseSignInWithCredential success")
+                    } else {
+                        Log.e(TAG, "FirebaseAuth exception", task.exception)
+                        try {
+                            throw task.exception!!
+                        } catch (e: FirebaseAuthUserCollisionException) {
+                            handleUserCollision()
+                        }
+                    }
+                }
+    }
+
+    private fun handleUserCollision() {
+        Toast.makeText(
+                this,
+                "Login with another provider, then link your account with this one",
+                Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun forgottenPassword(view: View) {
@@ -135,7 +194,16 @@ class SignInActivity : LifecycleActivity() {
 
             }
             SignInViewModel.SIGNIN_PROVIDER.TWITTER -> {
-
+                Log.d(TAG, "Twitter provider clicked")
+                mTwitterAuthClient.authorize(this, object : Callback<TwitterSession>() {
+                    override fun failure(exception: TwitterException?) {
+                        Log.e(TAG, "Twitter exception", exception)
+                    }
+                    override fun success(result: Result<TwitterSession>) {
+                        Log.d(TAG, "Twitter authorization success")
+                        handleTwitterLogin(result.data)
+                    }
+                })
             }
             SignInViewModel.SIGNIN_PROVIDER.EMAIL -> {
 
