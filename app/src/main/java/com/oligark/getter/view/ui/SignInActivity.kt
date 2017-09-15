@@ -210,6 +210,7 @@ class SignInActivity: LifecycleActivity() {
     fun guestLogin() {
         // Anonymous user login
         Log.d(TAG, "Guest login")
+        doLogin(SignInViewModel.SIGNIN_PROVIDER.GUEST)
     }
 
     fun emailLogin() {
@@ -264,6 +265,17 @@ class SignInActivity: LifecycleActivity() {
             }
             SignInViewModel.SIGNIN_PROVIDER.EMAIL -> {
 
+            }
+            SignInViewModel.SIGNIN_PROVIDER.GUEST -> {
+                FirebaseAuth.getInstance().signInAnonymously()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d(TAG, "Anonymous login success")
+                                launchMainActivity()
+                            } else {
+                                Log.e(TAG, "Anonymous login error", task.exception)
+                            }
+                        }
             }
         }
     }
