@@ -5,13 +5,10 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 
 import com.oligark.getter.R
@@ -43,6 +40,14 @@ class SignInActivity: LifecycleActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signin)
 //        viewModel = ViewModelProviders.of(this).get(SignInViewModel::class.java)
+
+        binding.loginBtn.setOnClickListener { emailLogin() }
+        binding.loginFbBtn.setOnClickListener { fbLogin() }
+        binding.loginTwitterBtn.setOnClickListener { twitterLogin() }
+        binding.loginGoogleBtn.setOnClickListener { googleLogin() }
+        binding.loginRegisterBtn.setOnClickListener { registerUser() }
+        binding.loginGuestBtn.setOnClickListener { guestLogin() }
+        binding.loginForgottenPassword.setOnClickListener { forgottenPassword() }
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             launchMainActivity()
@@ -144,31 +149,34 @@ class SignInActivity: LifecycleActivity() {
         ).show()
     }
 
-    fun forgottenPassword(view: View) {
+    fun forgottenPassword() {
         // Redirect to forgotten password screen
+        Log.d(TAG, "Forgotten password clicked")
     }
 
-    fun registerUser(view: View) {
+    fun registerUser() {
         // Redirect to user registration screen
+        Log.d(TAG, "Register user")
     }
 
-    fun guestLogin(view: View) {
+    fun guestLogin() {
         // Anonymous user login
+        Log.d(TAG, "Guest login")
     }
 
-    fun emailLogin(view: View) {
+    fun emailLogin() {
         doLogin(SignInViewModel.SIGNIN_PROVIDER.EMAIL)
     }
 
-    fun fbLogin(view: View) {
+    fun fbLogin() {
         doLogin(SignInViewModel.SIGNIN_PROVIDER.FACEBOOK)
     }
 
-    fun twitterLogin(view: View) {
+    fun twitterLogin() {
         doLogin(SignInViewModel.SIGNIN_PROVIDER.TWITTER)
     }
 
-    fun googleLogin(view: View) {
+    fun googleLogin() {
         doLogin(SignInViewModel.SIGNIN_PROVIDER.GOOGLE)
     }
 

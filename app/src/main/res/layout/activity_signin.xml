@@ -114,8 +114,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/login_password_layout"
                 app:layout_constraintRight_toRightOf="@+id/login_password_layout"
-                app:layout_constraintLeft_toLeftOf="@+id/login_password_layout"
-                android:onClick="emailLogin"/>
+                app:layout_constraintLeft_toLeftOf="@+id/login_password_layout"/>
 
             <TextView
                 android:id="@+id/login_forgotten_password"
@@ -126,8 +125,7 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintTop_toBottomOf="@+id/login_btn"
                 app:layout_constraintLeft_toLeftOf="@+id/login_btn"
-                app:layout_constraintRight_toRightOf="@+id/login_btn"
-                android:onClick="forgottenPassword"/>
+                app:layout_constraintRight_toRightOf="@+id/login_btn"/>
 
             <LinearLayout
                 android:id="@+id/login_secondary_btn_layout"
@@ -146,7 +144,6 @@
                 <Button
                     android:id="@+id/login_register_btn"
                     android:text="@string/login_register_btn"
-                    android:onClick="registerUser"
                     style="@style/AppTheme.LoginSecondaryButton" />
 
                 <Space
@@ -157,7 +154,6 @@
                 <Button
                     android:id="@+id/login_guest_btn"
                     android:text="@string/login_guest_btn"
-                    android:onClick="guestLogin"
                     style="@style/AppTheme.LoginSecondaryButton" />
 
             </LinearLayout>
@@ -216,8 +212,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@android:color/white"
-                    android:src="@drawable/ic_facebook_logo"
-                    android:onClick="fbLogin"/>
+                    android:src="@drawable/ic_facebook_logo"/>
 
                 <Space
                     android:layout_width="0dp"
@@ -231,8 +226,7 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:background="@android:color/white"
-                    android:src="@drawable/ic_google_logo"
-                    android:onClick="googleLogin"/>
+                    android:src="@drawable/ic_google_logo"/>
 
                 <Space
                     android:layout_width="0dp"
@@ -244,8 +238,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@android:color/white"
-                    android:src="@drawable/ic_twitter_logo"
-                    android:onClick="twitterLogin"/>
+                    android:src="@drawable/ic_twitter_logo"/>
 
                 <Space
                     android:layout_width="0dp"
