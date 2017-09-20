@@ -5,6 +5,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.facebook.*
 import com.facebook.login.LoginManager
@@ -14,12 +15,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.*
+import com.twitter.sdk.android.core.*
+import com.twitter.sdk.android.core.identity.TwitterAuthClient
 
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivitySigninBinding
 import com.oligark.getter.viewmodel.SignInViewModel
-import com.twitter.sdk.android.core.*
-import com.twitter.sdk.android.core.identity.TwitterAuthClient
+import com.oligark.getter.view.utils.animate
 
 class SignInActivity: LifecycleActivity() {
 
@@ -71,6 +73,7 @@ class SignInActivity: LifecycleActivity() {
                     }
                     override fun onError(error: FacebookException?) {
                         Log.e(TAG, "Login error", error)
+                        onLoginError()
                     }
                 }
         )
@@ -99,7 +102,7 @@ class SignInActivity: LifecycleActivity() {
             Log.d(TAG, "Facebook onActivityResult")
             mFbCallbackManager.onActivityResult(requestCode, resultCode, data)
             if (FirebaseAuth.getInstance().currentUser != null) {
-                launchMainActivity()
+                onLoginSuccess()
             }
             return
         }
@@ -108,7 +111,7 @@ class SignInActivity: LifecycleActivity() {
             Log.d(TAG, "Twitter onActivityResult")
             mTwitterAuthClient.onActivityResult(requestCode, resultCode, data)
             if (FirebaseAuth.getInstance().currentUser != null) {
-                launchMainActivity()
+                onLoginSuccess()
             }
             return
         }
@@ -132,13 +135,27 @@ class SignInActivity: LifecycleActivity() {
         finish()
     }
 
+    private fun onLoginSuccess() {
+        onLoginComplete()
+        launchMainActivity()
+    }
+
+    private fun onLoginComplete() {
+        hideLoading()
+    }
+
+    private fun onLoginError() {
+        onLoginComplete()
+        Toast.makeText(this, "Ocurrió un error. Intente nuevamente", Toast.LENGTH_SHORT).show()
+    }
+
     private fun handleGoogleLogin(account: GoogleSignInAccount) {
         credential = GoogleAuthProvider.getCredential(account.idToken, null)
         FirebaseAuth.getInstance().signInWithCredential(credential!!)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "Google FirebaseSignInWithCredential success")
-                        launchMainActivity()
+                        onLoginSuccess()
                     } else {
                         Log.e(TAG, "Google FirebaseSignInWithCredential error", task.exception)
                         try {
@@ -158,6 +175,7 @@ class SignInActivity: LifecycleActivity() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "Facebook FirebaseSignInWithCredential success")
+                        onLoginSuccess()
                     } else {
                         Log.e(TAG, "Facebook FirebaseAuth exception", task.exception)
                         try {
@@ -178,6 +196,7 @@ class SignInActivity: LifecycleActivity() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d(TAG, "Twitter FirebaseSignInWithCredential success")
+                        onLoginSuccess()
                     } else {
                         Log.e(TAG, "Twitter FirebaseAuth exception", task.exception)
                         try {
@@ -249,6 +268,7 @@ class SignInActivity: LifecycleActivity() {
             pass: String = ""
     ) {
         Log.d(TAG, "$user - $pass - $providerType")
+        showLoading()
 //        viewModel.doLogin(providerType, user, pass)
         val permissions = getPermissionsForProvider(providerType)
         when (providerType) {
@@ -276,7 +296,7 @@ class SignInActivity: LifecycleActivity() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Log.d(TAG, "Email login success")
-                                launchMainActivity()
+                                onLoginSuccess()
                             } else {
                                 Log.e(TAG, "Email login error", task.exception)
                                 try {
@@ -292,7 +312,7 @@ class SignInActivity: LifecycleActivity() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Log.d(TAG, "Anonymous login success")
-                                launchMainActivity()
+                                onLoginSuccess()
                             } else {
                                 Log.e(TAG, "Anonymous login error", task.exception)
                             }
@@ -312,5 +332,13 @@ class SignInActivity: LifecycleActivity() {
             }
         }
         return permissions
+    }
+
+    private fun showLoading() {
+//        binding.signinLoading.progressOverlay.animate(View.VISIBLE, 0.6f, 200)
+    }
+
+    private fun hideLoading() {
+//        binding.signinLoading.progressOverlay.animate(View.GONE, 0f, 200)
     }
 }
