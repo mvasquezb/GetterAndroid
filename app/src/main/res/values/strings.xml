@@ -18,7 +18,7 @@
     <string name="login_register_btn">Registrarme</string>
     <string name="login_guest_btn">Entrar como invitado</string>
     <string name="login_signin_with">Conectarme con…</string>
-    
+
     <string name="credits_icons_freepik">
         http://www.freepik.com
     </string>
@@ -31,4 +31,5 @@
     <string name="credits_flaticon_license_link">
         http://creativecommons.org/licenses/by/3.0
     </string>
+    <string name="title_activity_maps">Map</string>
 </resources>
