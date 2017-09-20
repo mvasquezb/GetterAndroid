@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">Getter</string>
+
+    <!-- FB App -->
+    <string name="facebook_application_id" translatable="false">1667303876644246</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1667303876644246</string>
+    <!-- Twitter App -->
+    <string name="twitter_consumer_key" translatable="false">2rQzkDkFl694CJ2jIBLBxyG36</string>
+    <string name="twitter_consumer_secret" translatable="false">wciuBDzxrKa7bIYOuKi2ThiKu36INlDGXZjOl7s3Z2aRZeyfIS</string>
+    <!-- Google App -->
+    <string name="google_web_client_id">988397032639-capicj30m8thad0bjq1r5s6bgvfh4ir2.apps.googleusercontent.com</string>
+
+
+    <string name="login_user_hint">Usuario</string>
+    <string name="login_password_hint">Contraseña</string>
+    <string name="login_login_btn">Ingresar</string>
+    <string name="login_forgot_password_text">Olvidé mi contraseña</string>
+    <string name="login_register_btn">Registrarme</string>
+    <string name="login_guest_btn">Entrar como invitado</string>
+    <string name="login_signin_with">Conectarme con…</string>
+    
+    <string name="credits_icons_freepik">
+        http://www.freepik.com
+    </string>
+    <string name="credits_flaticon_link">
+        https://www.flaticon.com
+    </string>
+    <string name="credits_flaticon_license_name">
+        Creative Commons BY 3.0
+    </string>
+    <string name="credits_flaticon_license_link">
+        http://creativecommons.org/licenses/by/3.0
+    </string>
 </resources>
