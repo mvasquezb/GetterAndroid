@@ -32,4 +32,5 @@
         http://creativecommons.org/licenses/by/3.0
     </string>
     <string name="title_activity_maps">Map</string>
+    <string name="location_permission_rejected">Habilite el servicio de ubicación para una mejor experiencia</string>
 </resources>

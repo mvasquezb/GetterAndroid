@@ -1,6 +1,7 @@
 project.ext {
     lifecycle = "1.0.0-alpha9"
     constraintLayout = "1.0.2"
+    playServices = "11.2.2"
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -48,11 +49,11 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:26.0.1'
     compile 'com.google.firebase:firebase-auth:11.2.2'
-    compile 'com.google.android.gms:play-services-auth:11.2.2'
+    compile "com.google.android.gms:play-services-auth:$project.playServices"
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.android.gms:play-services-maps:11.2.2'
+    compile "com.google.android.gms:play-services-maps:$project.playServices"
+    compile "com.google.android.gms:play-services-location:$project.playServices"
     testCompile 'junit:junit:4.12'
 }
 
