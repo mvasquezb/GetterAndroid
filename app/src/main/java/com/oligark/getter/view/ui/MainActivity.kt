@@ -101,17 +101,22 @@ class MainActivity : LifecycleActivity(), OnMapReadyCallback {
         if (mLocationPermissionGranted) {
             val locationResult = locationClient.lastLocation
             locationResult.addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
+                if (task.isSuccessful) {
                     lastKnownLocation = task.result
+                    Log.d(TAG, "$lastKnownLocation")
                     if (lastKnownLocation != null) {
-                        mMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(
+                        val currentPos = LatLng(
                                 lastKnownLocation!!.latitude,
                                 lastKnownLocation!!.longitude
-                        )))
+                        )
+                        googleMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentPos))
+                    } else {
+                        Log.d(TAG, "Task successful. Current location is null")
                     }
                 } else {
                     Log.d(TAG, "Current location is null")
-                    Log.e(TAG, "LocationServices error: %s", task.exception)
+                    Log.e(TAG, "LocationServices error: ${task.exception}")
                     val sydney = LatLng(-34.0, 151.0)
                     googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
