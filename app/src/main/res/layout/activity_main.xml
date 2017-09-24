@@ -11,6 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.oligark.getter.view.ui.MainActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.oligark.getter.view.ui.MapFragment" />
 
 </android.support.constraint.ConstraintLayout>
