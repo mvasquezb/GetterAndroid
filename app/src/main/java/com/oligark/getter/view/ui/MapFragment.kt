@@ -34,6 +34,7 @@ class MapFragment :
 
     private lateinit var locationClient: FusedLocationProviderClient
     private var lastKnownLocation: Location? = null
+    private val mDefaultLocation = LatLng(-12.069444, -77.079444) // PUCP
 
     override fun onActivityCreated(p0: Bundle?) {
         super.onActivityCreated(p0)
@@ -90,37 +91,26 @@ class MapFragment :
         Log.d(TAG, "Permission granted: $mLocationPermissionGranted")
         if (mLocationPermissionGranted) {
             mMap.isMyLocationEnabled = true
-//            mMap.moveCamera(
-//                    CameraUpdateFactory.newLatLng(LatLng(
-//                            mMap.myLocation.latitude,
-//                            mMap.myLocation.longitude
-//                    ))
-//            )
-
-            val locationResult = locationClient.lastLocation
-            locationResult.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    lastKnownLocation = task.result
-                    Log.d(TAG, "$lastKnownLocation")
-                    if (lastKnownLocation != null) {
-                        val currentPos = LatLng(
-                                lastKnownLocation!!.latitude,
-                                lastKnownLocation!!.longitude
-                        )
-                        mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
-                        mMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM.toFloat())
-                        )
-                    } else {
-                        Log.d(TAG, "Task successful. Current location is null")
-                    }
+            locationClient.lastLocation.addOnSuccessListener { location ->
+                lastKnownLocation = location
+                Log.d(TAG, "$lastKnownLocation")
+                if (location != null) {
+                    val currentPos = LatLng(
+                            location.latitude,
+                            location.longitude
+                    )
+                    mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
+                    mMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM.toFloat())
+                    )
                 } else {
-                    Log.d(TAG, "Current location is null")
-                    Log.e(TAG, "LocationServices error: ${task.exception}")
-                    val sydney = LatLng(-34.0, 151.0)
-                    mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+                    Log.d(TAG, "Task successful. Current location is null")
                 }
+            }.addOnFailureListener { exception ->
+                Log.d(TAG, "Current location is null")
+                Log.e(TAG, "LocationServices error: $exception")
+                mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("Marcador en la PUCP"))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
             }
         }
     }
@@ -135,7 +125,7 @@ class MapFragment :
     }
 
     override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(activity, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(activity, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
         return false
