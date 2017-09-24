@@ -1,6 +1,7 @@
 package com.oligark.getter.view.ui
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.oligark.getter.R
 import android.widget.RelativeLayout
+import com.google.android.gms.maps.model.CircleOptions
 
 /**
  * Created by pmvb on 17-09-23.
@@ -27,7 +29,7 @@ class MapFragment :
         GoogleMap.OnMyLocationButtonClickListener {
     companion object {
         @JvmField val TAG = MapFragment::class.java.simpleName
-        @JvmStatic private val DEFAULT_ZOOM = 14
+        @JvmStatic private val DEFAULT_ZOOM = 16.toFloat()
         @JvmField val PERMISSION_REQUEST_FINE_LOCATION = 51412
     }
 
@@ -101,9 +103,17 @@ class MapFragment :
                             location.latitude,
                             location.longitude
                     )
-                    mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
-                    mMap.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM.toFloat())
+//                    mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
+
+                    // Set circle around current location
+                    // Radius in meters
+                    // TODO("update radius to match user level")
+                    mMap.addCircle(CircleOptions()
+                            .center(currentPos)
+                            .radius(100.0)
+                            .strokeWidth(0f)
+                            .fillColor(Color.argb(96, 128, 128, 255))
                     )
                 } else {
                     Log.d(TAG, "Task successful. Current location is null")
