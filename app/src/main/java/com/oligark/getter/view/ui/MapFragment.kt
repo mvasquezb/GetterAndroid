@@ -5,6 +5,7 @@ import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.oligark.getter.R
+import android.widget.RelativeLayout
 
 /**
  * Created by pmvb on 17-09-23.
@@ -112,6 +114,14 @@ class MapFragment :
                 mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("Marcador en la PUCP"))
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
             }
+
+            // Move MyLocation button to bottom right
+            val locationButton = (activity.findViewById<View>(1).parent as View)
+                    .findViewById<View>(2)
+            val layoutParams = locationButton.layoutParams as RelativeLayout.LayoutParams
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
+            layoutParams.setMargins(0, 0, 30, 30)
         }
     }
 
