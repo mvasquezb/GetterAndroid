@@ -19,7 +19,11 @@
             android:id="@+id/searchbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
             app:floatingSearch_searchHint="@string/search_hint"
-            app:floatingSearch_leftActionMode="showHamburger"/>
+            app:floatingSearch_leftActionMode="showHamburger"
+            app:floatingSearch_menu="@menu/menu_searchbar"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

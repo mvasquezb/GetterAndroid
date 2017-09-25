@@ -38,4 +38,5 @@
     <string name="menu_item_history">Historial Getter</string>
     <string name="menu_item_about">Acerca de Getter</string>
     <string name="menu_item_logout">Cerrar sesión</string>
+    <string name="menu_item_filter">Filtrar</string>
 </resources>
