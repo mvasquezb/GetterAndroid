@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.oligark.getter.view.ui.MainActivity">
-
-    <fragment
-        android:id="@+id/map"
+    xmlns:tools="http://schemas.android.com/tools">
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.oligark.getter.view.ui.MainActivity"
-        android:name="com.oligark.getter.view.ui.MapFragment" />
+        tools:context="com.oligark.getter.view.ui.MainActivity">
 
-</android.support.constraint.ConstraintLayout>
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.oligark.getter.view.ui.MainActivity"
+            android:name="com.oligark.getter.view.ui.MapFragment" />
+
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/searchbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:floatingSearch_searchHint="@string/search_hint"
+            app:floatingSearch_leftActionMode="showHamburger"/>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

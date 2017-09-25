@@ -54,6 +54,8 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
     compile "com.google.android.gms:play-services-maps:$project.playServices"
     compile "com.google.android.gms:play-services-location:$project.playServices"
+    compile "com.github.arimorty:floatingsearchview:2.1.1"
+
     testCompile 'junit:junit:4.12'
 }
 
