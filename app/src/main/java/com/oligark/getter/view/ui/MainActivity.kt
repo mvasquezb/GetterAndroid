@@ -1,13 +1,18 @@
 package com.oligark.getter.view.ui
 
 import android.arch.lifecycle.LifecycleActivity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
+import android.graphics.drawable.Drawable
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -26,8 +31,11 @@ import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
+import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.squareup.picasso.Picasso
 
 class MainActivity : LifecycleActivity() {
     companion object {
@@ -62,13 +70,27 @@ class MainActivity : LifecycleActivity() {
     }
 
     private fun setupDrawerMenu() {
+        // Setup image loading
+        DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
+            override fun placeholder(ctx: Context): Drawable =
+                    ContextCompat.getDrawable(ctx, R.mipmap.getter_logo)
+
+            override fun set(imageView: ImageView, uri: Uri, placeholder: Drawable, tag: String) {
+                Picasso.with(imageView.context).load(uri).placeholder(placeholder).into(imageView)
+            }
+
+            override fun cancel(imageView: ImageView) {
+                Picasso.with(imageView.context).cancelRequest(imageView)
+            }
+
+        })
         // Add profile header
         navHeader = AccountHeaderBuilder().withActivity(this)
                 .withHeaderBackground(R.drawable.login_round_border)
                 .addProfiles(
                         ProfileDrawerItem().withName(mUser.displayName)
                                 .withEmail(mUser.email)
-                                .withIcon(R.mipmap.ic_launcher_round)
+                                .withIcon(R.mipmap.getter_logo)
                 )
                 .withSelectionListEnabledForSingleProfile(false)
                 .build()
