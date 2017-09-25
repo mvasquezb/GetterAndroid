@@ -68,6 +68,9 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$project.playServices"
     compile "com.google.android.gms:play-services-location:$project.playServices"
     compile "com.github.arimorty:floatingsearchview:2.1.1"
+    compile('com.mikepenz:fastadapter:2.6.3@aar') {
+        transitive = true
+    }
     compile('com.mikepenz:materialize:0.8.5@aar') {
         transitive = true
     }
