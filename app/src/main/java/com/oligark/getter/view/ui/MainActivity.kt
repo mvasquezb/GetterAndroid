@@ -93,6 +93,12 @@ class MainActivity : LifecycleActivity() {
                                 .withIcon(R.mipmap.getter_logo)
                 )
                 .withSelectionListEnabledForSingleProfile(false)
+                .withOnAccountHeaderListener { view, profile, current ->
+                    Log.d(TAG, "Profile image clicked")
+                    Toast.makeText(this, "Profile for: ${mUser.email}", Toast.LENGTH_SHORT).show()
+                    // TODO("Open profile edit fragment")
+                    true
+                }
                 .build()
 
         // Build basic drawer
@@ -100,10 +106,35 @@ class MainActivity : LifecycleActivity() {
                 .withHeader(navHeader.view)
                 .inflateMenu(R.menu.menu_main)
                 .withSelectedItem(-1)
+                .withOnDrawerItemClickListener { view, position, drawerItem ->
+                    onNavigationItemSelected(view.id)
+                    true
+                }
                 .build()
 
         // Setup searchbar hamburger hook
         binding.searchbar.attachNavigationDrawerToMenuButton(mDrawer.drawerLayout)
+    }
+
+    private fun onNavigationItemSelected(itemId: Int) {
+        when (itemId) {
+            R.id.btn_menu_preferences -> {
+                // TODO("Load preferences fragment")
+                Log.d(TAG, "Preferences clicked")
+            }
+            R.id.btn_menu_history -> {
+                // TODO("Load history fragment")
+                Log.d(TAG, "History clicked")
+            }
+            R.id.btn_menu_about -> {
+                // TODO("Load about fragment")
+                Log.d(TAG, "About clicked")
+            }
+            R.id.btn_menu_logout -> {
+                // TODO("Logout")
+                Log.d(TAG, "Logout clicked")
+            }
+        }
     }
 
     private fun setupSearchbar() {
