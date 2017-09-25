@@ -78,6 +78,7 @@ dependencies {
         transitive = false
     }
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
 
     testCompile 'junit:junit:4.12'
 }
