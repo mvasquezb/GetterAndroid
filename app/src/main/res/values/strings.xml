@@ -34,4 +34,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="location_permission_rejected">Habilite el servicio de ubicación para una mejor experiencia</string>
     <string name="search_hint">Buscar</string>
+    <string name="menu_item_preferences">Preferencias</string>
+    <string name="menu_item_history">Historial Getter</string>
+    <string name="menu_item_about">Acerca de Getter</string>
+    <string name="menu_item_logout">Cerrar sesión</string>
 </resources>
