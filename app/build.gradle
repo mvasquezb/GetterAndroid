@@ -1,7 +1,8 @@
 project.ext {
-    lifecycle = "1.0.0-alpha9"
+    lifecycle = "1.0.0-beta1"
     constraintLayout = "1.0.2"
     playServices = "11.2.2"
+    supportLibs = "26.1.0"
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -41,22 +42,37 @@ dependencies {
         transitive = true
     }
 
-    compile "com.android.support.constraint:constraint-layout:$project.constraintLayout"
     compile "android.arch.lifecycle:runtime:$project.lifecycle"
     compile "android.arch.lifecycle:extensions:$project.lifecycle"
+    compile "android.arch.persistence.room:runtime:$project.lifecycle"
     annotationProcessor "android.arch.lifecycle:compiler:$project.lifecycle"
+    annotationProcessor "android.arch.persistence.room:compiler:$project.lifecycle"
     kapt 'com.android.databinding:compiler:2.3.3'
 
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.google.firebase:firebase-auth:11.2.2'
+    compile "com.android.support.constraint:constraint-layout:$project.constraintLayout"
+    compile "com.android.support:appcompat-v7:$project.supportLibs"
+    /**
+     * Explicit dependency conflict resolution
+     */
+    compile "com.android.support:design:$project.supportLibs"
+    compile "com.android.support:support-fragment:$project.supportLibs"
+    compile "com.android.support:customtabs:$project.supportLibs"
+    compile "com.android.support:cardview-v7:$project.supportLibs"
+    /**
+     * End explicit dependency conflict resolution
+     */
+    compile "com.google.firebase:firebase-auth:$project.playServices"
     compile "com.google.android.gms:play-services-auth:$project.playServices"
     compile 'com.firebaseui:firebase-ui-auth:2.3.0'
     compile 'com.facebook.android:facebook-android-sdk:4.22.1'
     compile "com.google.android.gms:play-services-maps:$project.playServices"
     compile "com.google.android.gms:play-services-location:$project.playServices"
     compile "com.github.arimorty:floatingsearchview:2.1.1"
-    compile('com.mikepenz:materialdrawer:5.9.5@aar') {
+    compile('com.mikepenz:materialize:0.8.5@aar') {
         transitive = true
+    }
+    compile('com.mikepenz:materialdrawer:5.9.5@aar') {
+        transitive = false
     }
     compile 'com.squareup.picasso:picasso:2.5.2'
 
