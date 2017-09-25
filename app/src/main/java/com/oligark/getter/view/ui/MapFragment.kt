@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.oligark.getter.R
 import android.widget.RelativeLayout
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 
 /**
@@ -39,6 +40,7 @@ class MapFragment :
     private lateinit var locationClient: FusedLocationProviderClient
     private var lastKnownLocation: Location? = null
     private val mDefaultLocation = LatLng(-12.069444, -77.079444) // PUCP
+    private var mLocationCircle: Circle? = null
 
     override fun onActivityCreated(p0: Bundle?) {
         super.onActivityCreated(p0)
@@ -109,12 +111,17 @@ class MapFragment :
                     // Set circle around current location
                     // Radius in meters
                     // TODO("update radius to match user level")
-                    mMap.addCircle(CircleOptions()
-                            .center(currentPos)
-                            .radius(100.0)
-                            .strokeWidth(0f)
-                            .fillColor(Color.argb(96, 128, 128, 255))
-                    )
+                    val circle = mLocationCircle
+                    if (circle == null) {
+                        mLocationCircle = mMap.addCircle(CircleOptions()
+                                .center(currentPos)
+                                .radius(100.0)
+                                .strokeWidth(0f)
+                                .fillColor(Color.argb(96, 128, 128, 255))
+                        )
+                    } else {
+                        circle.center = currentPos
+                    }
                 } else {
                     Log.d(TAG, "Task successful. Current location is null")
                 }
