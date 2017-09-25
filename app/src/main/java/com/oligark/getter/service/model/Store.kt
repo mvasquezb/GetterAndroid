@@ -13,7 +13,7 @@ import android.arch.persistence.room.*
                 childColumns = arrayOf("business_id")
         ))
 )
-class Store(
+open class Store(
     @PrimaryKey
     val id: Int,
     @ColumnInfo(name = "business_id")
