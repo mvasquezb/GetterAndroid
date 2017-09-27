@@ -10,13 +10,13 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.crashlytics.android.Crashlytics
+import com.google.android.gms.maps.model.Marker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.mikepenz.materialdrawer.AccountHeader
@@ -28,7 +28,9 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.service.model.BusinessStore
 import com.oligark.getter.viewmodel.StoresViewModel
+import com.oligark.getter.viewmodel.resources.BaseResource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
@@ -44,6 +46,8 @@ class MainActivity : LifecycleActivity() {
     private lateinit var mDrawer: Drawer
     private lateinit var navHeader: AccountHeader
 
+    private lateinit var storesViewModel: StoresViewModel
+
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         Fabric.with(this, Crashlytics())
@@ -56,12 +60,37 @@ class MainActivity : LifecycleActivity() {
         }
         mUser = auth.currentUser!!
 
-        val viewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
-        viewModel.businessStores.observe(this, Observer { stores ->
-            Toast.makeText(this, "Store: ${stores?.first()?.businessId} - ${stores?.first()?.businessName}", Toast.LENGTH_LONG).show()
+        storesViewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
+        storesViewModel.stores.observe(this, Observer { storesResource ->
+            when (storesResource?.loadState) {
+                BaseResource.LoadState.LOADING -> {
+                    showProgress()
+                }
+                BaseResource.LoadState.SUCCESS -> {
+                    hideProgress()
+                    // Assume MapFragment updates map markers
+                }
+                BaseResource.LoadState.ERROR -> {
+                    hideProgress()
+                    Toast.makeText(
+                            this,
+                            "Ocurrió un error en la carga de datos. Intente nuevamente",
+                            Toast.LENGTH_LONG
+                    ).show()
+                }
+                else -> {}
+            }
         })
         setupSearchbar()
         setupDrawerMenu()
+    }
+
+    private fun showProgress() {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun hideProgress() {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun startSignInActivity() {

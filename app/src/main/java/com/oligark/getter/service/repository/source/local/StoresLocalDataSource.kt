@@ -10,7 +10,8 @@ import com.oligark.getter.service.repository.source.StoreDataSource
  */
 class StoresLocalDataSource : StoreDataSource {
     override fun getItems(callback: DataSource.LoadItemsCallback<BusinessStore>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        callback.onDataNotAvailable()
     }
 
     override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<BusinessStore>) {

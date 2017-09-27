@@ -30,7 +30,27 @@ class StoresRemoteDataSource : StoreDataSource {
             .create(StoresService::class.java)
 
     override fun getItems(callback: DataSource.LoadItemsCallback<BusinessStore>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        storesService.getStores().enqueue(object : Callback<List<BusinessStore>> {
+            override fun onResponse(call: Call<List<BusinessStore>>?, response: Response<List<BusinessStore>>?) {
+                if (response == null || response.isSuccessful.not()) {
+                    Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()}")
+                    callback.onDataNotAvailable()
+                    return
+                }
+                val stores = response.body()
+                if (stores == null) {
+                    Log.e(TAG, response.toString())
+                    callback.onDataNotAvailable()
+                    return
+                }
+                callback.onItemsLoaded(stores)
+            }
+
+            override fun onFailure(call: Call<List<BusinessStore>>?, t: Throwable?) {
+                Log.e(TAG, "API error: $t")
+                callback.onDataNotAvailable()
+            }
+        })
     }
 
     override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<BusinessStore>) {
@@ -39,27 +59,29 @@ class StoresRemoteDataSource : StoreDataSource {
                 val store = response?.body()
                 if (store == null) {
                     Log.e(TAG, response.toString())
+                    callback.onDataNotAvailable()
                     return
                 }
-                Log.e(TAG, "${store.businessName} ${store.businessLogoUrl} ${store.businessId} ${store.id} ${store.latitude} ${store.longitude}")
+                Log.d(TAG, "${store.businessName} ${store.businessLogoUrl} ${store.businessId} ${store.id} ${store.latitude} ${store.longitude}")
                 callback.onItemLoaded(store)
             }
 
             override fun onFailure(call: Call<BusinessStore>?, t: Throwable?) {
+                Log.e(TAG, "API error: $t")
                 callback.onDataNotAvailable()
             }
         })
     }
 
     override fun refreshItems() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // Not required
     }
 
     override fun saveItem(item: BusinessStore) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // Not required
     }
 
     override fun deleteAll() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // Not required
     }
 }
