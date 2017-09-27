@@ -20,6 +20,4 @@ open class Store(
     val businessId: Int,
     val latitude: Float,
     val longitude: Float
-) {
-
-}
+)

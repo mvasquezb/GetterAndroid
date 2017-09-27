@@ -8,7 +8,6 @@ class BusinessStore(
         businessId: Int,
         latitude: Float,
         longitude: Float,
-        val bussinessName: String,
+        val businessName: String,
         val businessLogoUrl: String
-) : Store(id, businessId, latitude, longitude) {
-}
+) : Store(id, businessId, latitude, longitude)

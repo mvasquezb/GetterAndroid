@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey
  * Created by pmvb on 17-09-25.
  */
 @Entity
-class User(
+data class User(
     @PrimaryKey
     val id: Int,
     val age: Int,
@@ -15,6 +15,4 @@ class User(
     val name: String,
     val password: String,
     val email: String
-) {
-
-}
+)
