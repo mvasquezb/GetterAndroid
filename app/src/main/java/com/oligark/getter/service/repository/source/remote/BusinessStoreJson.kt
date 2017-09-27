@@ -6,8 +6,8 @@ package com.oligark.getter.service.repository.source.remote
 data class BusinessStoreJson(
         val id: Int,
         val business_id: Int,
-        val latitude: Float,
-        val longitude: Float,
+        val latitude: Double,
+        val longitude: Double,
         val business_name: String,
         val business_logo_url: String
 )

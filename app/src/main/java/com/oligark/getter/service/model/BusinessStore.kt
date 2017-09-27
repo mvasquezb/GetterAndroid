@@ -6,8 +6,8 @@ package com.oligark.getter.service.model
 class BusinessStore(
         id: Int,
         businessId: Int,
-        latitude: Float,
-        longitude: Float,
+        latitude: Double,
+        longitude: Double,
         val businessName: String,
         val businessLogoUrl: String
 ) : Store(id, businessId, latitude, longitude)

@@ -18,6 +18,6 @@ open class Store(
     val id: Int,
     @ColumnInfo(name = "business_id")
     val businessId: Int,
-    val latitude: Float,
-    val longitude: Float
+    val latitude: Double,
+    val longitude: Double
 )
