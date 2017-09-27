@@ -1,7 +1,6 @@
 package com.oligark.getter.service.repository.source.remote
 
 import android.util.Log
-import com.oligark.getter.service.model.BusinessStore
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.source.DataSource
 import com.oligark.getter.service.repository.source.StoreDataSource
@@ -29,9 +28,9 @@ class StoresRemoteDataSource : StoreDataSource {
             .build()
             .create(StoresService::class.java)
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<BusinessStore>) {
-        storesService.getStores().enqueue(object : Callback<List<BusinessStore>> {
-            override fun onResponse(call: Call<List<BusinessStore>>?, response: Response<List<BusinessStore>>?) {
+    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
+        storesService.getStores().enqueue(object : Callback<List<Store>> {
+            override fun onResponse(call: Call<List<Store>>?, response: Response<List<Store>>?) {
                 if (response == null || response.isSuccessful.not()) {
                     Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()}")
                     callback.onDataNotAvailable()
@@ -46,16 +45,16 @@ class StoresRemoteDataSource : StoreDataSource {
                 callback.onItemsLoaded(stores)
             }
 
-            override fun onFailure(call: Call<List<BusinessStore>>?, t: Throwable?) {
+            override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
                 Log.e(TAG, "API error: $t")
                 callback.onDataNotAvailable()
             }
         })
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<BusinessStore>) {
-        storesService.getStore(itemId).enqueue(object : Callback<BusinessStore> {
-            override fun onResponse(call: Call<BusinessStore>?, response: Response<BusinessStore>?) {
+    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+        storesService.getStore(itemId).enqueue(object : Callback<Store> {
+            override fun onResponse(call: Call<Store>?, response: Response<Store>?) {
                 val store = response?.body()
                 if (store == null) {
                     Log.e(TAG, response.toString())
@@ -66,7 +65,7 @@ class StoresRemoteDataSource : StoreDataSource {
                 callback.onItemLoaded(store)
             }
 
-            override fun onFailure(call: Call<BusinessStore>?, t: Throwable?) {
+            override fun onFailure(call: Call<Store>?, t: Throwable?) {
                 Log.e(TAG, "API error: $t")
                 callback.onDataNotAvailable()
             }
@@ -77,7 +76,7 @@ class StoresRemoteDataSource : StoreDataSource {
         // Not required
     }
 
-    override fun saveItem(item: BusinessStore) {
+    override fun saveItem(item: Store) {
         // Not required
     }
 

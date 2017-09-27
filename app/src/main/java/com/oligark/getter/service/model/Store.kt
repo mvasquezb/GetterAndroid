@@ -6,12 +6,12 @@ import android.arch.persistence.room.*
  * Created by pmvb on 17-09-25.
  */
 
-@Entity(tableName = "stores",
-        foreignKeys = arrayOf(ForeignKey(
-                entity = Business::class,
-                parentColumns = arrayOf("id"),
-                childColumns = arrayOf("business_id")
-        ))
+@Entity(tableName = "stores"
+//        foreignKeys = arrayOf(ForeignKey(
+//                entity = Business::class,
+//                parentColumns = arrayOf("id"),
+//                childColumns = arrayOf("business_id")
+//        ))
 )
 open class Store(
     @PrimaryKey
@@ -19,5 +19,7 @@ open class Store(
     @ColumnInfo(name = "business_id")
     val businessId: Int,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val businessName: String,
+    val businessLogoUrl: String
 )

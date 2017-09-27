@@ -1,6 +1,6 @@
 package com.oligark.getter.service.repository.source.local
 
-import com.oligark.getter.service.model.BusinessStore
+import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.source.DataSource
 import com.oligark.getter.service.repository.source.StoreDataSource
 import com.oligark.getter.util.AppExecutors
@@ -18,22 +18,22 @@ class StoresLocalDataSource : StoreDataSource {
         this.storeDao = storeDao
     }
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<BusinessStore>) {
+    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
         executors.diskIO.execute {
-            val stores = storeDao.getBusinessStores()
+            val stores = storeDao.getStores()
             executors.mainThread.execute {
                 if (stores.isEmpty()) {
                     callback.onDataNotAvailable()
                 } else {
-                    callback.onItemsLoaded(stores as List<BusinessStore>)
+                    callback.onItemsLoaded(stores)
                 }
             }
         }
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<BusinessStore>) {
+    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
         executors.diskIO.execute {
-            val store = storeDao.getBusinessStore(itemId)
+            val store = storeDao.getStore(itemId)
             executors.mainThread.execute {
                 if (store == null) {
                     callback.onDataNotAvailable()
@@ -48,7 +48,7 @@ class StoresLocalDataSource : StoreDataSource {
         // Do nothing
     }
 
-    override fun saveItem(item: BusinessStore) {
+    override fun saveItem(item: Store) {
         executors.diskIO.execute {
             storeDao.insertStore(item)
         }

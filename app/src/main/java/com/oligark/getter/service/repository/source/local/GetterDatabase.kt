@@ -19,7 +19,7 @@ import com.oligark.getter.service.model.User
         User::class,
         Business::class,
         Store::class
-), version = 1)
+), version = 2)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
         @JvmStatic private val DB_NAME = "GetterDb.db"
@@ -35,7 +35,7 @@ abstract class GetterDatabase : RoomDatabase() {
                             context.applicationContext,
                             GetterDatabase::class.java,
                             DB_NAME
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                 }
                 return INSTANCE!!
             }

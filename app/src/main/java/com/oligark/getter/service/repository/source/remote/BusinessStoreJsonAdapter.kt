@@ -1,6 +1,6 @@
 package com.oligark.getter.service.repository.source.remote
 
-import com.oligark.getter.service.model.BusinessStore
+import com.oligark.getter.service.model.Store
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 
@@ -8,8 +8,8 @@ import com.squareup.moshi.ToJson
  * Created by pmvb on 17-09-26.
  */
 class BusinessStoreJsonAdapter {
-    @FromJson fun fromJson(store: BusinessStoreJson): BusinessStore {
-        return BusinessStore(
+    @FromJson fun fromJson(store: StoreJson): Store {
+        return Store(
                 store.id,
                 store.business_id,
                 store.latitude,
@@ -19,8 +19,8 @@ class BusinessStoreJsonAdapter {
         )
     }
 
-    @ToJson fun toJson(store: BusinessStore): BusinessStoreJson {
-        return BusinessStoreJson(
+    @ToJson fun toJson(store: Store): StoreJson {
+        return StoreJson(
                 store.id,
                 store.businessId,
                 store.latitude,

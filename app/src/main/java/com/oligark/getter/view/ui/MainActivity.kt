@@ -16,7 +16,6 @@ import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.crashlytics.android.Crashlytics
-import com.google.android.gms.maps.model.Marker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.mikepenz.materialdrawer.AccountHeader
@@ -28,7 +27,6 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
-import com.oligark.getter.service.model.BusinessStore
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.BaseResource
 import com.squareup.picasso.Picasso

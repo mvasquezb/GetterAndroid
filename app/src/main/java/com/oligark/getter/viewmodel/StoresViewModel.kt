@@ -4,7 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import com.oligark.getter.service.model.BusinessStore
+import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.StoreRepository
 import com.oligark.getter.service.repository.source.DataSource
 import com.oligark.getter.service.repository.source.local.GetterDatabase
@@ -35,8 +35,8 @@ class StoresViewModel(application: Application) : AndroidViewModel(application) 
     init {
         Log.e(TAG, "Before getting item")
         stores.value = StoresResource(listOf(), BaseResource.LoadState.LOADING)
-        businessStoreRepository.getItems(object : DataSource.LoadItemsCallback<BusinessStore> {
-            override fun onItemsLoaded(items: List<BusinessStore>) {
+        businessStoreRepository.getItems(object : DataSource.LoadItemsCallback<Store> {
+            override fun onItemsLoaded(items: List<Store>) {
                 stores.value = StoresResource(items, BaseResource.LoadState.SUCCESS)
             }
 

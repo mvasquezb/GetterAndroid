@@ -19,7 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.oligark.getter.R
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.model.*
-import com.oligark.getter.service.model.BusinessStore
+import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.BaseResource
 import java.lang.Exception
@@ -72,7 +72,7 @@ class MapFragment :
         getMapAsync(this)
     }
 
-    private fun updateStoreMarkers(stores: List<BusinessStore>) {
+    private fun updateStoreMarkers(stores: List<Store>) {
         storeMarkers.forEach { marker ->
             marker.remove()
         }
