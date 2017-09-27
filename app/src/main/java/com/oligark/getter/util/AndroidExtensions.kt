@@ -1,6 +1,6 @@
 @file:JvmName("AndroidUtils")
 
-package com.oligark.getter.utils
+package com.oligark.getter.util
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

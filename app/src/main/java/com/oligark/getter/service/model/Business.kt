@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey
  * Business -> User relationship not necessary for this app
  *
  */
-@Entity
+@Entity(tableName = "businesses")
 class Business(
         @PrimaryKey
         val id: Int,

@@ -22,8 +22,11 @@ import com.oligark.getter.service.model.User
 ), version = 1)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
+        @JvmStatic private val DB_NAME = "GetterDb.db"
+
         @JvmStatic private var INSTANCE: GetterDatabase? = null
         @JvmStatic private val lock = Any()
+
         @JvmStatic
         fun getInstance(context: Context): GetterDatabase {
             synchronized(lock) {
@@ -31,7 +34,7 @@ abstract class GetterDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                             context.applicationContext,
                             GetterDatabase::class.java,
-                            "GetterDb.db"
+                            DB_NAME
                     ).build()
                 }
                 return INSTANCE!!
@@ -39,5 +42,5 @@ abstract class GetterDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun storesDao(): StoresDao
+    abstract fun storeDao(): StoreDao
 }

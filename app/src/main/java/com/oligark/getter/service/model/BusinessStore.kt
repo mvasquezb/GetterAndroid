@@ -1,8 +1,11 @@
 package com.oligark.getter.service.model
 
+import android.arch.persistence.room.Entity
+
 /**
  * Created by pmvb on 17-09-25.
  */
+@Entity
 class BusinessStore(
         id: Int,
         businessId: Int,

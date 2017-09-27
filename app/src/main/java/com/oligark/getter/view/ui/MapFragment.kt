@@ -56,7 +56,6 @@ class MapFragment :
         if (requestLocationPermission()) {
             locationClient = LocationServices.getFusedLocationProviderClient(activity)
         }
-        getMapAsync(this)
         storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
@@ -66,6 +65,11 @@ class MapFragment :
                 else -> {}
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        getMapAsync(this)
     }
 
     private fun updateStoreMarkers(stores: List<BusinessStore>) {

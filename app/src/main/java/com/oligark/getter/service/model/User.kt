@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey
 /**
  * Created by pmvb on 17-09-25.
  */
-@Entity
+@Entity(tableName = "users")
 data class User(
     @PrimaryKey
     val id: Int,

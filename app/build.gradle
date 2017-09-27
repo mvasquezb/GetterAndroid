@@ -38,6 +38,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resConfigs "auto"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -65,8 +70,9 @@ dependencies {
     compile "android.arch.lifecycle:extensions:$project.lifecycle"
     compile "android.arch.persistence.room:runtime:$project.lifecycle"
     annotationProcessor "android.arch.lifecycle:compiler:$project.lifecycle"
-    annotationProcessor "android.arch.persistence.room:compiler:$project.lifecycle"
     kapt 'com.android.databinding:compiler:2.3.3'
+    annotationProcessor "android.arch.persistence.room:compiler:$project.lifecycle"
+    kapt "android.arch.persistence.room:compiler:$project.lifecycle"
 
     compile "com.android.support.constraint:constraint-layout:$project.constraintLayout"
     compile "com.android.support:appcompat-v7:$project.supportLibs"
