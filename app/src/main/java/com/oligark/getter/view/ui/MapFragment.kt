@@ -1,5 +1,7 @@
 package com.oligark.getter.view.ui
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -14,12 +16,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.oligark.getter.R
 import android.widget.RelativeLayout
-import com.google.android.gms.maps.model.Circle
-import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.*
+import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.StoresViewModel
+import com.oligark.getter.viewmodel.resources.BaseResource
+import java.lang.Exception
 
 /**
  * Created by pmvb on 17-09-23.
@@ -27,14 +30,16 @@ import com.google.android.gms.maps.model.CircleOptions
 class MapFragment :
         SupportMapFragment(),
         OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener {
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMarkerClickListener {
+
     companion object {
         @JvmField val TAG = MapFragment::class.java.simpleName
         @JvmStatic private val DEFAULT_ZOOM = 16.toFloat()
         @JvmField val PERMISSION_REQUEST_FINE_LOCATION = 51412
     }
 
-    private lateinit var mMap: GoogleMap
+    private var mMap: GoogleMap? = null
     private var mLocationPermissionGranted = false
 
     private lateinit var locationClient: FusedLocationProviderClient
@@ -42,13 +47,34 @@ class MapFragment :
     private val mDefaultLocation = LatLng(-12.069444, -77.079444) // PUCP
     private var mLocationCircle: Circle? = null
 
+    private lateinit var storesViewModel: StoresViewModel
+    private val storeMarkers = mutableListOf<Marker>()
+
     override fun onActivityCreated(p0: Bundle?) {
         super.onActivityCreated(p0)
 
         if (requestLocationPermission()) {
             locationClient = LocationServices.getFusedLocationProviderClient(activity)
         }
+        storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
+    }
+
+    override fun onStart() {
+        super.onStart()
         getMapAsync(this)
+    }
+
+    private fun updateStoreMarkers(stores: List<Store>) {
+        if (mMap == null) {
+            return
+        }
+        stores.forEach { store ->
+            val marker = mMap?.addMarker(MarkerOptions()
+                    .position(LatLng(store.latitude, store.longitude))
+                    .title(store.businessName)
+            )
+            marker?.tag = store.businessId
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -96,41 +122,9 @@ class MapFragment :
     private fun mapSetup() {
         Log.d(TAG, "Permission granted: $mLocationPermissionGranted")
         if (mLocationPermissionGranted) {
-            mMap.isMyLocationEnabled = true
-            locationClient.lastLocation.addOnSuccessListener { location ->
-                lastKnownLocation = location
-                Log.d(TAG, "$lastKnownLocation")
-                if (location != null) {
-                    val currentPos = LatLng(
-                            location.latitude,
-                            location.longitude
-                    )
-//                    mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
+            mMap?.isMyLocationEnabled = true
 
-                    // Set circle around current location
-                    // Radius in meters
-                    // TODO("update radius to match user level")
-                    val circle = mLocationCircle
-                    if (circle == null) {
-                        mLocationCircle = mMap.addCircle(CircleOptions()
-                                .center(currentPos)
-                                .radius(100.0)
-                                .strokeWidth(0f)
-                                .fillColor(Color.argb(96, 128, 128, 255))
-                        )
-                    } else {
-                        circle.center = currentPos
-                    }
-                } else {
-                    Log.d(TAG, "Task successful. Current location is null")
-                }
-            }.addOnFailureListener { exception ->
-                Log.d(TAG, "Current location is null")
-                Log.e(TAG, "LocationServices error: $exception")
-                mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("Marcador en la PUCP"))
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
-            }
+            setupLocation()
 
             // Move MyLocation button to bottom right
             val locationButton = (activity.findViewById<View>(1).parent as View)
@@ -140,11 +134,64 @@ class MapFragment :
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
             layoutParams.setMargins(0, 0, 30, 30)
         }
+        storesViewModel.stores.observe(this, Observer { storesResource ->
+            when (storesResource?.loadState) {
+                BaseResource.LoadState.SUCCESS -> {
+                    updateStoreMarkers(storesResource.stores)
+                }
+                else -> {}
+            }
+        })
+        mMap?.setOnMarkerClickListener(this)
+    }
+
+    private fun setupLocation() {
+        locationClient.lastLocation.addOnSuccessListener { location ->
+            onLocationUpdate(location)
+        }.addOnFailureListener { exception ->
+            onLocationError(exception)
+        }
+    }
+
+    private fun onLocationError(exception: Exception) {
+        Log.d(TAG, "Current location is null")
+        Log.e(TAG, "LocationServices error: $exception")
+        mMap?.addMarker(MarkerOptions().position(mDefaultLocation).title("PUCP"))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
+    }
+
+    private fun onLocationUpdate(location: Location?) {
+        lastKnownLocation = location
+        Log.d(TAG, "$lastKnownLocation")
+        if (location != null) {
+            val currentPos = LatLng(
+                    location.latitude,
+                    location.longitude
+            )
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
+
+            // Set circle around current location
+            // Radius in meters
+            // TODO("update radius to match user level")
+            val circle = mLocationCircle
+            if (circle == null) {
+                mLocationCircle = mMap?.addCircle(CircleOptions()
+                        .center(currentPos)
+                        .radius(500.0)
+                        .strokeWidth(0f)
+                        .fillColor(Color.argb(96, 128, 128, 255))
+                )
+            } else {
+                circle.center = currentPos
+            }
+        } else {
+            Log.d(TAG, "Task successful. Current location is null")
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setOnMyLocationButtonClickListener(this)
+        mMap?.setOnMyLocationButtonClickListener(this)
 
         if (requestLocationPermission()) {
             mapSetup()
@@ -155,6 +202,12 @@ class MapFragment :
 //        Toast.makeText(activity, "MyLocation button clicked", Toast.LENGTH_SHORT).show()
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
+        return false
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val businessId = marker.tag as Int
+        Toast.makeText(activity, "Marker tag: $businessId", Toast.LENGTH_LONG).show()
         return false
     }
 }
