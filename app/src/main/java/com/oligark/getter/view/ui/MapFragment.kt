@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.*
 import com.oligark.getter.service.model.BusinessStore
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.BaseResource
+import java.lang.Exception
 
 /**
  * Created by pmvb on 17-09-23.
@@ -68,6 +69,9 @@ class MapFragment :
     }
 
     private fun updateStoreMarkers(stores: List<BusinessStore>) {
+        storeMarkers.forEach { marker ->
+            marker.remove()
+        }
         storeMarkers.clear()
         stores.forEach { store ->
             val marker = mMap.addMarker(MarkerOptions()
@@ -126,6 +130,7 @@ class MapFragment :
         mMap.setOnMarkerClickListener(this)
         if (mLocationPermissionGranted) {
             mMap.isMyLocationEnabled = true
+
             setupLocation()
 
             // Move MyLocation button to bottom right
@@ -140,38 +145,45 @@ class MapFragment :
 
     private fun setupLocation() {
         locationClient.lastLocation.addOnSuccessListener { location ->
-            lastKnownLocation = location
-            Log.d(TAG, "$lastKnownLocation")
-            if (location != null) {
-                val currentPos = LatLng(
-                        location.latitude,
-                        location.longitude
-                )
-//                    mMap.addMarker(MarkerOptions().position(currentPos).title("Current location"))
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
-
-                // Set circle around current location
-                // Radius in meters
-                // TODO("update radius to match user level")
-                val circle = mLocationCircle
-                if (circle == null) {
-                    mLocationCircle = mMap.addCircle(CircleOptions()
-                            .center(currentPos)
-                            .radius(100.0)
-                            .strokeWidth(0f)
-                            .fillColor(Color.argb(96, 128, 128, 255))
-                    )
-                } else {
-                    circle.center = currentPos
-                }
-            } else {
-                Log.d(TAG, "Task successful. Current location is null")
-            }
+            onLocationUpdate(location)
         }.addOnFailureListener { exception ->
-            Log.d(TAG, "Current location is null")
-            Log.e(TAG, "LocationServices error: $exception")
-            mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("Marcador en la PUCP"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
+            onLocationError(exception)
+        }
+    }
+
+    private fun onLocationError(exception: Exception) {
+        Log.d(TAG, "Current location is null")
+        Log.e(TAG, "LocationServices error: $exception")
+        mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("PUCP"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
+    }
+
+    private fun onLocationUpdate(location: Location?) {
+        lastKnownLocation = location
+        Log.d(TAG, "$lastKnownLocation")
+        if (location != null) {
+            val currentPos = LatLng(
+                    location.latitude,
+                    location.longitude
+            )
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
+
+            // Set circle around current location
+            // Radius in meters
+            // TODO("update radius to match user level")
+            val circle = mLocationCircle
+            if (circle == null) {
+                mLocationCircle = mMap.addCircle(CircleOptions()
+                        .center(currentPos)
+                        .radius(500.0)
+                        .strokeWidth(0f)
+                        .fillColor(Color.argb(96, 128, 128, 255))
+                )
+            } else {
+                circle.center = currentPos
+            }
+        } else {
+            Log.d(TAG, "Task successful. Current location is null")
         }
     }
 
