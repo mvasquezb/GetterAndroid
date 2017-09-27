@@ -55,6 +55,8 @@ class StoresLocalDataSource : StoreDataSource {
     }
 
     override fun deleteAll() {
-        // Do nothing
+        executors.diskIO.execute {
+            storeDao.deleteAll()
+        }
     }
 }

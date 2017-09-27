@@ -42,6 +42,7 @@ class StoresRemoteDataSource : StoreDataSource {
                     callback.onDataNotAvailable()
                     return
                 }
+                Log.e(TAG, response.toString())
                 callback.onItemsLoaded(stores)
             }
 

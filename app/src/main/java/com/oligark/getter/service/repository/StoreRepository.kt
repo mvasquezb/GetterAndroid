@@ -39,20 +39,25 @@ class StoreRepository : StoreDataSource {
 
     override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
         if (cache.isNotEmpty() && !cacheIsDirty) {
+            Log.e(TAG, "Cache not empty: ${cache.values}")
             callback.onItemsLoaded(cache.values.toList())
             return
         }
 
         if (cacheIsDirty) {
+            Log.e(TAG, "Getting items from remote source")
             getItemsFromRemoteDataSource(callback)
         } else {
             localDataSource.getItems(object : DataSource.LoadItemsCallback<Store> {
                 override fun onItemsLoaded(items: List<Store>) {
+                    Log.e(TAG, "Items loaded from local storage")
+                    Log.e(TAG, "Items: ${items.size} - $items")
                     refreshCache(items)
                     callback.onItemsLoaded(cache.values.toList())
                 }
 
                 override fun onDataNotAvailable() {
+                    Log.e(TAG, "Items loaded from remote storage")
                     getItemsFromRemoteDataSource(callback)
                 }
             })
@@ -89,20 +94,20 @@ class StoreRepository : StoreDataSource {
     }
 
     override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
-        Log.e(TAG, "Before getting item")
+        Log.d(TAG, "Before getting item")
 
         val cached = cache[itemId]
         if (cached != null && !cacheIsDirty) {
             callback.onItemLoaded(cached)
             return
         }
-        Log.e(TAG, "Before getting local item")
+        Log.d(TAG, "Before getting local item")
 
         // Load from alternate data sources
         localDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
             override fun onItemLoaded(item: Store) {
                 cache[item.id] = item
-                Log.e(TAG, "Local item loaded")
+                Log.d(TAG, "Local item loaded")
                 callback.onItemLoaded(item)
             }
 
@@ -110,12 +115,12 @@ class StoreRepository : StoreDataSource {
                 remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
                     override fun onItemLoaded(item: Store) {
                         cache[item.id] = item
-                        Log.e(TAG, "Remote item loaded")
+                        Log.d(TAG, "Remote item loaded")
                         callback.onItemLoaded(item)
                     }
 
                     override fun onDataNotAvailable() {
-                        Log.e(TAG, "Remote data not available")
+                        Log.d(TAG, "Remote data not available")
                         callback.onDataNotAvailable()
                     }
                 })

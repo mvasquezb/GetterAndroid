@@ -39,7 +39,7 @@ class MapFragment :
         @JvmField val PERMISSION_REQUEST_FINE_LOCATION = 51412
     }
 
-    private lateinit var mMap: GoogleMap
+    private var mMap: GoogleMap? = null
     private var mLocationPermissionGranted = false
 
     private lateinit var locationClient: FusedLocationProviderClient
@@ -57,14 +57,6 @@ class MapFragment :
             locationClient = LocationServices.getFusedLocationProviderClient(activity)
         }
         storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
-        storesViewModel.stores.observe(this, Observer { storesResource ->
-            when (storesResource?.loadState) {
-                BaseResource.LoadState.SUCCESS -> {
-                    updateStoreMarkers(storesResource.stores)
-                }
-                else -> {}
-            }
-        })
     }
 
     override fun onStart() {
@@ -73,17 +65,15 @@ class MapFragment :
     }
 
     private fun updateStoreMarkers(stores: List<Store>) {
-        storeMarkers.forEach { marker ->
-            marker.remove()
+        if (mMap == null) {
+            return
         }
-        storeMarkers.clear()
         stores.forEach { store ->
-            val marker = mMap.addMarker(MarkerOptions()
+            val marker = mMap?.addMarker(MarkerOptions()
                     .position(LatLng(store.latitude, store.longitude))
                     .title(store.businessName)
             )
-            marker.tag = store.businessId
-            storeMarkers.add(marker)
+            marker?.tag = store.businessId
         }
     }
 
@@ -131,9 +121,8 @@ class MapFragment :
 
     private fun mapSetup() {
         Log.d(TAG, "Permission granted: $mLocationPermissionGranted")
-        mMap.setOnMarkerClickListener(this)
         if (mLocationPermissionGranted) {
-            mMap.isMyLocationEnabled = true
+            mMap?.isMyLocationEnabled = true
 
             setupLocation()
 
@@ -145,6 +134,15 @@ class MapFragment :
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
             layoutParams.setMargins(0, 0, 30, 30)
         }
+        storesViewModel.stores.observe(this, Observer { storesResource ->
+            when (storesResource?.loadState) {
+                BaseResource.LoadState.SUCCESS -> {
+                    updateStoreMarkers(storesResource.stores)
+                }
+                else -> {}
+            }
+        })
+        mMap?.setOnMarkerClickListener(this)
     }
 
     private fun setupLocation() {
@@ -158,8 +156,8 @@ class MapFragment :
     private fun onLocationError(exception: Exception) {
         Log.d(TAG, "Current location is null")
         Log.e(TAG, "LocationServices error: $exception")
-        mMap.addMarker(MarkerOptions().position(mDefaultLocation).title("PUCP"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
+        mMap?.addMarker(MarkerOptions().position(mDefaultLocation).title("PUCP"))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLng(mDefaultLocation))
     }
 
     private fun onLocationUpdate(location: Location?) {
@@ -170,14 +168,14 @@ class MapFragment :
                     location.latitude,
                     location.longitude
             )
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, DEFAULT_ZOOM))
 
             // Set circle around current location
             // Radius in meters
             // TODO("update radius to match user level")
             val circle = mLocationCircle
             if (circle == null) {
-                mLocationCircle = mMap.addCircle(CircleOptions()
+                mLocationCircle = mMap?.addCircle(CircleOptions()
                         .center(currentPos)
                         .radius(500.0)
                         .strokeWidth(0f)
@@ -193,7 +191,7 @@ class MapFragment :
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setOnMyLocationButtonClickListener(this)
+        mMap?.setOnMyLocationButtonClickListener(this)
 
         if (requestLocationPermission()) {
             mapSetup()

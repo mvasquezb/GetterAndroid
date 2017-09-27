@@ -50,4 +50,7 @@ interface StoreDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg stores: Store)
+
+    @Query("delete from stores")
+    fun deleteAll()
 }
