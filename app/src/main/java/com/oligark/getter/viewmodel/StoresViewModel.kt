@@ -34,7 +34,7 @@ class StoresViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         stores.value = StoresResource(listOf(), BaseResource.LoadState.LOADING)
-        businessStoreRepository.refreshItems() // By default
+//        businessStoreRepository.refreshItems() // By default
         businessStoreRepository.getItems(object : DataSource.LoadItemsCallback<Store> {
             override fun onItemsLoaded(items: List<Store>) {
                 stores.value = StoresResource(items, BaseResource.LoadState.SUCCESS)

@@ -48,7 +48,6 @@ class MapFragment :
     private var mLocationCircle: Circle? = null
 
     private lateinit var storesViewModel: StoresViewModel
-    private val storeMarkers = mutableListOf<Marker>()
 
     override fun onActivityCreated(p0: Bundle?) {
         super.onActivityCreated(p0)
