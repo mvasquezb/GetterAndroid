@@ -158,8 +158,10 @@ class MainActivity : LifecycleActivity() {
                 Log.d(TAG, "About clicked")
             }
             R.id.btn_menu_logout -> {
-                // TODO("Logout")
                 Log.d(TAG, "Logout clicked")
+                FirebaseAuth.getInstance().signOut()
+                startSignInActivity()
+                finish()
             }
         }
     }
