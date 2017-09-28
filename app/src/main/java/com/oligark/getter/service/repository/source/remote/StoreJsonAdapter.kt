@@ -7,7 +7,7 @@ import com.squareup.moshi.ToJson
 /**
  * Created by pmvb on 17-09-26.
  */
-class BusinessStoreJsonAdapter {
+class StoreJsonAdapter {
     @FromJson fun fromJson(store: StoreJson): Store {
         return Store(
                 store.id,

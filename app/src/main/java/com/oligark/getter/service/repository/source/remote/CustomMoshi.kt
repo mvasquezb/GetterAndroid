@@ -7,6 +7,6 @@ import com.squareup.moshi.Moshi
  */
 object CustomMoshi {
     val INSTANCE = Moshi.Builder()
-            .add(BusinessStoreJsonAdapter())
+            .add(StoreJsonAdapter())
             .build()
 }
