@@ -3,6 +3,7 @@ package com.oligark.getter.service.repository.source.local
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.source.DataSource
 import com.oligark.getter.service.repository.source.StoreDataSource
+import com.oligark.getter.service.repository.source.local.db.StoreDao
 import com.oligark.getter.util.AppExecutors
 
 /**

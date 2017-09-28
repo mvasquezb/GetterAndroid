@@ -1,4 +1,4 @@
-package com.oligark.getter.service.repository.source.local
+package com.oligark.getter.service.repository.source.local.db
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room

@@ -3,11 +3,10 @@ package com.oligark.getter.viewmodel
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.StoreRepository
 import com.oligark.getter.service.repository.source.DataSource
-import com.oligark.getter.service.repository.source.local.GetterDatabase
+import com.oligark.getter.service.repository.source.local.db.GetterDatabase
 import com.oligark.getter.service.repository.source.local.StoresLocalDataSource
 import com.oligark.getter.service.repository.source.remote.StoresRemoteDataSource
 import com.oligark.getter.util.AppExecutors
