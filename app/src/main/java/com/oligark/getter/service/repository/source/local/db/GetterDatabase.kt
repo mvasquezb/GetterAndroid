@@ -3,8 +3,10 @@ package com.oligark.getter.service.repository.source.local.db
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import com.oligark.getter.service.model.Business
+import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.model.User
 
@@ -18,7 +20,8 @@ import com.oligark.getter.service.model.User
 @Database(entities = arrayOf(
         User::class,
         Business::class,
-        Store::class
+        Store::class,
+        Offer::class
 ), version = 3)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
