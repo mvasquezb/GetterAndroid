@@ -31,7 +31,7 @@ interface OfferDao {
     fun insert(offer: Offer)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg offers: Offer)
+    fun bulkInsert(vararg offers: Offer)
 
     @Query("delete from offers")
     fun deleteAll()
