@@ -140,6 +140,15 @@ class StoreRepository : StoreDataSource {
         cache[item.id] = item
     }
 
+    override fun saveBulkItems(vararg items: Store) {
+        remoteDataSource.saveBulkItems(*items)
+        localDataSource.saveBulkItems(*items)
+
+        items.forEach { item ->
+            cache[item.id] = item
+        }
+    }
+
     override fun deleteAll() {
         remoteDataSource.deleteAll()
         localDataSource.deleteAll()

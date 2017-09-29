@@ -55,6 +55,12 @@ class StoresLocalDataSource : StoreDataSource {
         }
     }
 
+    override fun saveBulkItems(vararg items: Store) {
+        executors.diskIO.execute {
+            storeDao.insertAll(*items)
+        }
+    }
+
     override fun deleteAll() {
         executors.diskIO.execute {
             storeDao.deleteAll()

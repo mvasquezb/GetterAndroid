@@ -14,7 +14,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Remote data source for stores
- * Potential for Dependency Injection (Singleton)
+ * Potential for Dependency Injection (Singleton) for storesService
  */
 class StoresRemoteDataSource : StoreDataSource {
 
@@ -82,6 +82,10 @@ class StoresRemoteDataSource : StoreDataSource {
     }
 
     override fun deleteAll() {
+        // Not required
+    }
+
+    override fun saveBulkItems(vararg items: Store) {
         // Not required
     }
 }

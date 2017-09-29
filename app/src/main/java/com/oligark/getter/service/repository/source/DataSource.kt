@@ -22,5 +22,7 @@ interface DataSource<T> {
 
     fun saveItem(item: T)
 
+    fun saveBulkItems(vararg items: T)
+
     fun deleteAll()
 }
