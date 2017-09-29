@@ -19,9 +19,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.oligark.getter.R
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.model.*
+import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.BaseResource
+import com.oligark.getter.viewmodel.resources.Resource
 import java.lang.Exception
 
 /**
@@ -48,14 +50,58 @@ class MapFragment :
     private var mLocationCircle: Circle? = null
 
     private lateinit var storesViewModel: StoresViewModel
+    private lateinit var offerViewModel: OfferViewModel
 
-    override fun onActivityCreated(p0: Bundle?) {
-        super.onActivityCreated(p0)
+    override fun onActivityCreated(data: Bundle?) {
+        super.onActivityCreated(data)
 
         if (requestLocationPermission()) {
             locationClient = LocationServices.getFusedLocationProviderClient(activity)
         }
         storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
+        offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
+        offerViewModel.offers.observe(activity, Observer { offerResource ->
+            when (offerResource?.loadState) {
+                Resource.LoadState.LOADING -> {
+                    hideLoadError()
+                    showOfferLoadProgress()
+                }
+                Resource.LoadState.ERROR -> {
+                    hideOfferLoadProgress()
+                    showLoadError()
+                }
+                Resource.LoadState.SUCCESS -> {
+                    hideOfferLoadProgress()
+                    showOfferList(offerResource.items)
+                }
+                else -> {}
+            }
+        })
+    }
+
+    private fun showOfferList(items: List<Offer>) {
+        if (items.isNotEmpty()) {
+            Toast.makeText(activity, items.first().description, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(activity, "No offers loaded", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun hideLoadError() {
+        //
+    }
+
+    private fun showLoadError() {
+        Log.e(TAG, "Error loading store offers")
+        Toast.makeText(activity, "Error loading store offers", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun hideOfferLoadProgress() {
+        //
+    }
+
+    private fun showOfferLoadProgress() {
+        //
     }
 
     override fun onStart() {
@@ -85,6 +131,7 @@ class MapFragment :
             PERMISSION_REQUEST_FINE_LOCATION -> {
                 if (grantResults.isNotEmpty()
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true
                     mapSetup()
                 } else {
                     Toast.makeText(
@@ -119,7 +166,7 @@ class MapFragment :
     }
 
     private fun mapSetup() {
-        Log.d(TAG, "Permission granted: $mLocationPermissionGranted")
+        Toast.makeText(activity, "Permission granted: $mLocationPermissionGranted", Toast.LENGTH_SHORT).show()
         if (mLocationPermissionGranted) {
             mMap?.isMyLocationEnabled = true
 
@@ -135,8 +182,8 @@ class MapFragment :
         }
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                BaseResource.LoadState.SUCCESS -> {
-                    updateStoreMarkers(storesResource.stores)
+                Resource.LoadState.SUCCESS -> {
+                    updateStoreMarkers(storesResource.items)
                 }
                 else -> {}
             }
