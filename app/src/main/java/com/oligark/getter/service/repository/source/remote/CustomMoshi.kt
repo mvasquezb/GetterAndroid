@@ -3,6 +3,7 @@ package com.oligark.getter.service.repository.source.remote
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
+import java.util.*
 
 /**
  * Should be injected singleton
@@ -12,6 +13,6 @@ object CustomMoshi {
             .add(KotlinJsonAdapterFactory())
             .add(StoreJsonAdapter())
             .add(OfferJsonAdapter())
-            .add(Rfc3339DateJsonAdapter())
+            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
             .build()
 }
