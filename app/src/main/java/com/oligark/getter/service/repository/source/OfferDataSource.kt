@@ -6,15 +6,13 @@ import com.oligark.getter.service.model.Offer
  * Created by pmvb on 17-09-28.
  */
 interface OfferDataSource : DataSource<Offer> {
-    fun getStoreOffers(storeId: Int, callback: DataSource.LoadItemsCallback<Offer>)
-
-    fun getActiveOffers(
+    fun getStoreOffers(
+            storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean = true
+            active: Boolean? = null
     )
 
-    fun getActiveStoreOffers(
-            storeId: Int,
+    fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean = true
     )

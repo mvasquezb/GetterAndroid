@@ -64,10 +64,15 @@ class OfferLocalDataSource : OfferDataSource {
 
     override fun getStoreOffers(
             storeId: Int,
-            callback: DataSource.LoadItemsCallback<Offer>
+            callback: DataSource.LoadItemsCallback<Offer>,
+            active: Boolean?
     ) {
         executors.diskIO.execute {
-            val offers = offerDao.getStoreOffers(storeId)
+            val offers = if (active == null) {
+                offerDao.getStoreOffers(storeId)
+            } else {
+                offerDao.getActiveStoreOffers(storeId, active)
+            }
             if (offers.isEmpty()) {
                 callback.onDataNotAvailable()
             } else {
@@ -82,21 +87,6 @@ class OfferLocalDataSource : OfferDataSource {
     ) {
         executors.diskIO.execute {
             val offers = offerDao.getActiveOffers(active)
-            if (offers.isEmpty()) {
-                callback.onDataNotAvailable()
-            } else {
-                callback.onItemsLoaded(offers)
-            }
-        }
-    }
-
-    override fun getActiveStoreOffers(
-            storeId: Int,
-            callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean
-    ) {
-        executors.diskIO.execute {
-            val offers = offerDao.getActiveStoreOffers(storeId, active)
             if (offers.isEmpty()) {
                 callback.onDataNotAvailable()
             } else {

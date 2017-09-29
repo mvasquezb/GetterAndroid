@@ -27,29 +27,6 @@ class OfferRemoteDataSource : OfferDataSource {
             .build()
             .create(OffersService::class.java)
 
-    private fun getStoreOffersUtil(
-            storeId: Int,
-            callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean? = null
-    ) {
-        offerService.getStoreOffers(storeId, active).enqueue(object : Callback<List<Offer>> {
-            override fun onFailure(call: Call<List<Offer>>?, t: Throwable?) {
-                Log.e(TAG, "Offer API error: $t")
-                callback.onDataNotAvailable()
-            }
-
-            override fun onResponse(call: Call<List<Offer>>?, response: Response<List<Offer>>?) {
-                Log.d(TAG, response.toString())
-                val offers = response?.body()
-                if (offers == null) {
-                    callback.onDataNotAvailable()
-                    return
-                }
-                callback.onItemsLoaded(offers)
-            }
-        })
-    }
-
     private fun getOffersUtil(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean? = null
@@ -72,12 +49,26 @@ class OfferRemoteDataSource : OfferDataSource {
         })
     }
 
-    override fun getStoreOffers(storeId: Int, callback: DataSource.LoadItemsCallback<Offer>) {
-        getStoreOffersUtil(storeId, callback)
-    }
+    override fun getStoreOffers(
+            storeId: Int,
+            callback: DataSource.LoadItemsCallback<Offer>,
+            active: Boolean?) {
+        offerService.getStoreOffers(storeId, active).enqueue(object : Callback<List<Offer>> {
+            override fun onFailure(call: Call<List<Offer>>?, t: Throwable?) {
+                Log.e(TAG, "Offer API error: $t")
+                callback.onDataNotAvailable()
+            }
 
-    override fun getActiveStoreOffers(storeId: Int, callback: DataSource.LoadItemsCallback<Offer>, active: Boolean) {
-        getStoreOffersUtil(storeId, callback, active)
+            override fun onResponse(call: Call<List<Offer>>?, response: Response<List<Offer>>?) {
+                Log.d(TAG, response.toString())
+                val offers = response?.body()
+                if (offers == null) {
+                    callback.onDataNotAvailable()
+                    return
+                }
+                callback.onItemsLoaded(offers)
+            }
+        })
     }
 
     override fun getItems(callback: DataSource.LoadItemsCallback<Offer>) {
