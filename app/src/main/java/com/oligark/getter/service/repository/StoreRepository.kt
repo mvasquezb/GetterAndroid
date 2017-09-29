@@ -9,7 +9,10 @@ import com.oligark.getter.service.repository.source.StoreDataSource
  * Store repository for all store loading
  * Potential for Dependency Injection
  */
-class StoreRepository : StoreDataSource {
+class StoreRepository private constructor(
+        private val localDataSource: StoreDataSource,
+        private val remoteDataSource: StoreDataSource
+) : StoreDataSource {
     companion object {
         val TAG = StoreRepository::class.java.simpleName
 
@@ -26,16 +29,9 @@ class StoreRepository : StoreDataSource {
             return INSTANCE!!
         }
     }
-    private val localDataSource: StoreDataSource
-    private val remoteDataSource: StoreDataSource
 
     private val cache = LinkedHashMap<Int, Store>()
     private var cacheIsDirty = false
-
-    private constructor(localDataSource: StoreDataSource, remoteDataSource: StoreDataSource) {
-        this.localDataSource = localDataSource
-        this.remoteDataSource = remoteDataSource
-    }
 
     override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
         if (cache.isNotEmpty() && !cacheIsDirty) {
@@ -50,8 +46,8 @@ class StoreRepository : StoreDataSource {
         } else {
             localDataSource.getItems(object : DataSource.LoadItemsCallback<Store> {
                 override fun onItemsLoaded(items: List<Store>) {
-                    Log.e(TAG, "Items loaded from local storage")
-                    Log.e(TAG, "Items: ${items.size} - $items")
+                    Log.d(TAG, "Items loaded from local storage")
+                    Log.d(TAG, "Items: ${items.size} - $items")
                     refreshCache(items)
                     callback.onItemsLoaded(cache.values.toList())
                 }
