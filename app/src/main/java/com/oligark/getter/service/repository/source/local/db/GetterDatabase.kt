@@ -19,7 +19,7 @@ import com.oligark.getter.service.model.User
         User::class,
         Business::class,
         Store::class
-), version = 2)
+), version = 3)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
         @JvmStatic private val DB_NAME = "GetterDb.db"
@@ -43,4 +43,5 @@ abstract class GetterDatabase : RoomDatabase() {
     }
 
     abstract fun storeDao(): StoreDao
+    abstract fun offerDao(): OfferDao
 }
