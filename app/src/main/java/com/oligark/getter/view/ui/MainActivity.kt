@@ -27,8 +27,9 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.BaseResource
+import com.oligark.getter.viewmodel.resources.Resource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
@@ -45,6 +46,7 @@ class MainActivity : LifecycleActivity() {
     private lateinit var navHeader: AccountHeader
 
     private lateinit var storesViewModel: StoresViewModel
+    private lateinit var offerViewModel: OfferViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,16 +61,17 @@ class MainActivity : LifecycleActivity() {
         mUser = auth.currentUser!!
 
         storesViewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
+        storesViewModel.init()
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                BaseResource.LoadState.LOADING -> {
+                Resource.LoadState.LOADING -> {
                     showProgress()
                 }
-                BaseResource.LoadState.SUCCESS -> {
+                Resource.LoadState.SUCCESS -> {
                     hideProgress()
                     // Assume MapFragment updates map markers
                 }
-                BaseResource.LoadState.ERROR -> {
+                Resource.LoadState.ERROR -> {
                     hideProgress()
                     Toast.makeText(
                             this,
@@ -79,6 +82,9 @@ class MainActivity : LifecycleActivity() {
                 else -> {}
             }
         })
+
+        offerViewModel = ViewModelProviders.of(this).get(OfferViewModel::class.java)
+
         setupSearchbar()
         setupDrawerMenu()
     }
