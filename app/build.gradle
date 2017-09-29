@@ -45,6 +45,7 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -63,6 +64,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support:multidex:1.0.1'
 
     compile("com.twitter.sdk.android:twitter-core:3.0.0@aar") {
         transitive = true
