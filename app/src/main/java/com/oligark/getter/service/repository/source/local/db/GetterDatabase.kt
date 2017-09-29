@@ -23,6 +23,7 @@ import com.oligark.getter.service.model.User
         Store::class,
         Offer::class
 ), version = 3)
+@TypeConverters(Converters::class)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
         @JvmStatic private val DB_NAME = "GetterDb.db"
