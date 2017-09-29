@@ -72,7 +72,7 @@ class MapFragment :
                     .position(LatLng(store.latitude, store.longitude))
                     .title(store.businessName)
             )
-            marker?.tag = store.businessId
+            marker?.tag = store.id
         }
     }
 
@@ -131,7 +131,7 @@ class MapFragment :
             val layoutParams = locationButton.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            layoutParams.setMargins(0, 0, 30, 30)
+            layoutParams.setMargins(0, 0, 20, 108)
         }
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
