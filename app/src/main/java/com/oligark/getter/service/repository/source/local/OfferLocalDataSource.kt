@@ -21,10 +21,12 @@ class OfferLocalDataSource : OfferDataSource {
     override fun getItems(callback: DataSource.LoadItemsCallback<Offer>) {
         executors.diskIO.execute {
             val offers = offerDao.getOffers()
-            if (offers.isEmpty()) {
-                callback.onDataNotAvailable()
-            } else {
-                callback.onItemsLoaded(offers)
+            executors.mainThread.execute {
+                if (offers.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onItemsLoaded(offers)
+                }
             }
         }
     }
@@ -32,10 +34,12 @@ class OfferLocalDataSource : OfferDataSource {
     override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Offer>) {
         executors.diskIO.execute {
             val offer = offerDao.getOffer(itemId)
-            if (offer == null) {
-                callback.onDataNotAvailable()
-            } else {
-                callback.onItemLoaded(offer)
+            executors.mainThread.execute {
+                if (offer == null) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onItemLoaded(offer)
+                }
             }
         }
     }
@@ -73,10 +77,12 @@ class OfferLocalDataSource : OfferDataSource {
             } else {
                 offerDao.getActiveStoreOffers(storeId, active)
             }
-            if (offers.isEmpty()) {
-                callback.onDataNotAvailable()
-            } else {
-                callback.onItemsLoaded(offers)
+            executors.mainThread.execute {
+                if (offers.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onItemsLoaded(offers)
+                }
             }
         }
     }
@@ -87,10 +93,12 @@ class OfferLocalDataSource : OfferDataSource {
     ) {
         executors.diskIO.execute {
             val offers = offerDao.getActiveOffers(active)
-            if (offers.isEmpty()) {
-                callback.onDataNotAvailable()
-            } else {
-                callback.onItemsLoaded(offers)
+            executors.mainThread.execute {
+                if (offers.isEmpty()) {
+                    callback.onDataNotAvailable()
+                } else {
+                    callback.onItemsLoaded(offers)
+                }
             }
         }
     }
