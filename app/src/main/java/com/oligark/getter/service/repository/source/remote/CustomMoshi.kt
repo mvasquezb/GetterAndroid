@@ -10,8 +10,8 @@ import java.util.*
  */
 object CustomMoshi {
     val INSTANCE = Moshi.Builder()
+            .add(DateJsonAdapter())
             .add(StoreJsonAdapter())
             .add(OfferJsonAdapter())
-            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
             .build()
 }
