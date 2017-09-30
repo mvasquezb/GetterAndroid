@@ -10,7 +10,6 @@ import java.util.*
  */
 object CustomMoshi {
     val INSTANCE = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
             .add(StoreJsonAdapter())
             .add(OfferJsonAdapter())
             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
