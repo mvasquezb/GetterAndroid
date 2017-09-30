@@ -21,7 +21,7 @@ class OfferRemoteDataSource : OfferDataSource {
         val TAG = OfferRemoteDataSource::class.java.simpleName
     }
 
-    val offerService: OffersService = Retrofit.Builder()
+    private val offerService: OffersService = Retrofit.Builder()
             .baseUrl(BaseApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(CustomMoshi.INSTANCE)) // Should be custom
             .build()
@@ -38,12 +38,14 @@ class OfferRemoteDataSource : OfferDataSource {
             }
 
             override fun onResponse(call: Call<List<Offer>>?, response: Response<List<Offer>>?) {
-                Log.d(TAG, response.toString())
+                Log.e(TAG, response.toString())
                 val offers = response?.body()
                 if (offers == null) {
+                    Log.e(TAG, "Offers null")
                     callback.onDataNotAvailable()
                     return
                 }
+                Log.e(TAG, "Offers: ${offers.first().description}")
                 callback.onItemsLoaded(offers)
             }
         })
@@ -60,11 +62,15 @@ class OfferRemoteDataSource : OfferDataSource {
             }
 
             override fun onResponse(call: Call<List<Offer>>?, response: Response<List<Offer>>?) {
-                Log.d(TAG, response.toString())
+                Log.e(TAG, response.toString())
                 val offers = response?.body()
                 if (offers == null) {
+                    Log.e(TAG, "Something went wrong loading offers for store $storeId")
                     callback.onDataNotAvailable()
                     return
+                }
+                if (offers.isEmpty()) {
+                    Log.e(TAG, "Store $storeId has no available offers")
                 }
                 callback.onItemsLoaded(offers)
             }
