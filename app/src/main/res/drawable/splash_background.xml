@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/darkGray"/>
+    <item
+        android:left="150dp"
+        android:right="150dp"
+        android:top="150dp"
+        android:bottom="150dp">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/getter_logo"/>
+    </item>
+
+
+</layer-list>
