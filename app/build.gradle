@@ -3,6 +3,8 @@ project.ext {
     constraintLayout = "1.0.2"
     playServices = "11.2.2"
     supportLibs = "26.1.0"
+    moshi = "1.5.0"
+    retrofit = "2.3.0"
 }
 buildscript {
     repositories {
@@ -43,6 +45,7 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -61,6 +64,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support:multidex:1.0.1'
 
     compile("com.twitter.sdk.android:twitter-core:3.0.0@aar") {
         transitive = true
@@ -106,10 +110,11 @@ dependencies {
         transitive = false
     }
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-moshi:2.3.0'
-    compile 'com.squareup.moshi:moshi:1.5.0'
-    compile 'com.squareup.moshi:moshi-kotlin:1.5.0'
+    compile "com.squareup.retrofit2:retrofit:$project.retrofit"
+    compile "com.squareup.retrofit2:converter-moshi:$project.retrofit"
+    compile "com.squareup.moshi:moshi:$project.moshi"
+    compile "com.squareup.moshi:moshi-kotlin:$project.moshi"
+    compile "com.squareup.moshi:moshi-adapters:$project.moshi"
 
     testCompile 'junit:junit:4.12'
 }

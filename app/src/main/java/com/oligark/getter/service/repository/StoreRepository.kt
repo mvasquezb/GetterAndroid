@@ -9,7 +9,10 @@ import com.oligark.getter.service.repository.source.StoreDataSource
  * Store repository for all store loading
  * Potential for Dependency Injection
  */
-class StoreRepository : StoreDataSource {
+class StoreRepository private constructor(
+        private val localDataSource: StoreDataSource,
+        private val remoteDataSource: StoreDataSource
+) : StoreDataSource {
     companion object {
         val TAG = StoreRepository::class.java.simpleName
 
@@ -26,32 +29,28 @@ class StoreRepository : StoreDataSource {
             return INSTANCE!!
         }
     }
-    private val localDataSource: StoreDataSource
-    private val remoteDataSource: StoreDataSource
 
     private val cache = LinkedHashMap<Int, Store>()
     private var cacheIsDirty = false
 
-    private constructor(localDataSource: StoreDataSource, remoteDataSource: StoreDataSource) {
-        this.localDataSource = localDataSource
-        this.remoteDataSource = remoteDataSource
-    }
-
-    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
-        if (cache.isNotEmpty() && !cacheIsDirty) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Store>,
+            forceUpdate: Boolean
+    ) {
+        if (cache.isNotEmpty() && !cacheIsDirty && !forceUpdate) {
             Log.e(TAG, "Cache not empty: ${cache.values}")
             callback.onItemsLoaded(cache.values.toList())
             return
         }
 
-        if (cacheIsDirty) {
+        if (cacheIsDirty || forceUpdate) {
             Log.e(TAG, "Getting items from remote source")
             getItemsFromRemoteDataSource(callback)
         } else {
             localDataSource.getItems(object : DataSource.LoadItemsCallback<Store> {
                 override fun onItemsLoaded(items: List<Store>) {
-                    Log.e(TAG, "Items loaded from local storage")
-                    Log.e(TAG, "Items: ${items.size} - $items")
+                    Log.d(TAG, "Items loaded from local storage")
+                    Log.d(TAG, "Items: ${items.size} - $items")
                     refreshCache(items)
                     callback.onItemsLoaded(cache.values.toList())
                 }
@@ -88,20 +87,27 @@ class StoreRepository : StoreDataSource {
 
     private fun refreshLocalDataSource(items: List<Store>) {
         localDataSource.deleteAll()
-        items.forEach {
-            localDataSource.saveItem(it)
-        }
+        localDataSource.saveBulkItems(*items.toTypedArray())
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         Log.d(TAG, "Before getting item")
 
         val cached = cache[itemId]
-        if (cached != null && !cacheIsDirty) {
+        if (cached != null && !cacheIsDirty && !forceUpdate) {
             callback.onItemLoaded(cached)
             return
         }
         Log.d(TAG, "Before getting local item")
+
+        if (forceUpdate) {
+            getSingleRemoteItem(itemId, callback)
+            return
+        }
 
         // Load from alternate data sources
         localDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
@@ -112,18 +118,22 @@ class StoreRepository : StoreDataSource {
             }
 
             override fun onDataNotAvailable() {
-                remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
-                    override fun onItemLoaded(item: Store) {
-                        cache[item.id] = item
-                        Log.d(TAG, "Remote item loaded")
-                        callback.onItemLoaded(item)
-                    }
+                getSingleRemoteItem(itemId, callback)
+            }
+        })
+    }
 
-                    override fun onDataNotAvailable() {
-                        Log.d(TAG, "Remote data not available")
-                        callback.onDataNotAvailable()
-                    }
-                })
+    private fun getSingleRemoteItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+        remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
+            override fun onItemLoaded(item: Store) {
+                cache[item.id] = item
+                Log.d(TAG, "Remote item loaded")
+                callback.onItemLoaded(item)
+            }
+
+            override fun onDataNotAvailable() {
+                Log.d(TAG, "Remote data not available")
+                callback.onDataNotAvailable()
             }
         })
     }
@@ -138,6 +148,15 @@ class StoreRepository : StoreDataSource {
 
         // Update cache
         cache[item.id] = item
+    }
+
+    override fun saveBulkItems(vararg items: Store) {
+        remoteDataSource.saveBulkItems(*items)
+        localDataSource.saveBulkItems(*items)
+
+        items.forEach { item ->
+            cache[item.id] = item
+        }
     }
 
     override fun deleteAll() {

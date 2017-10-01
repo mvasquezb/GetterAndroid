@@ -1,6 +1,5 @@
 package com.oligark.getter.view.ui
 
-import android.arch.lifecycle.LifecycleActivity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -10,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
@@ -27,12 +27,14 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.BaseResource
+import com.oligark.getter.viewmodel.resources.Resource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
-class MainActivity : LifecycleActivity() {
+class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     companion object {
         @JvmField val TAG = MainActivity::class.java.simpleName
     }
@@ -45,6 +47,7 @@ class MainActivity : LifecycleActivity() {
     private lateinit var navHeader: AccountHeader
 
     private lateinit var storesViewModel: StoresViewModel
+    private lateinit var offerViewModel: OfferViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,16 +62,17 @@ class MainActivity : LifecycleActivity() {
         mUser = auth.currentUser!!
 
         storesViewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
+        storesViewModel.init()
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                BaseResource.LoadState.LOADING -> {
+                Resource.LoadState.LOADING -> {
                     showProgress()
                 }
-                BaseResource.LoadState.SUCCESS -> {
+                Resource.LoadState.SUCCESS -> {
                     hideProgress()
-                    // Assume MapFragment updates map markers
+                    // Update map markers in MapFragment
                 }
-                BaseResource.LoadState.ERROR -> {
+                Resource.LoadState.ERROR -> {
                     hideProgress()
                     Toast.makeText(
                             this,
@@ -79,8 +83,31 @@ class MainActivity : LifecycleActivity() {
                 else -> {}
             }
         })
+
+        offerViewModel = ViewModelProviders.of(this).get(OfferViewModel::class.java)
+
         setupSearchbar()
         setupDrawerMenu()
+    }
+
+    override fun onStoreSelected(store: Store) {
+        // Show offers fragment
+        Log.e(TAG, "Store selected: $store")
+        val data = Bundle()
+        data.putParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY, store)
+
+        val storeOffers = StoreOffersFragment()
+        storeOffers.arguments = data
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
+                )
+                .add(R.id.store_offers_container, storeOffers)
+                .addToBackStack(null)
+                .commit()
+        offerViewModel.getStoreOffers(store.id)
+        Log.e(TAG, "StoreOffersFragment loaded")
     }
 
     private fun showProgress() {

@@ -14,7 +14,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Remote data source for stores
- * Potential for Dependency Injection (Singleton)
+ * Potential for Dependency Injection (Singleton) for storesService
  */
 class StoresRemoteDataSource : StoreDataSource {
 
@@ -28,7 +28,10 @@ class StoresRemoteDataSource : StoreDataSource {
             .build()
             .create(StoresService::class.java)
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         storesService.getStores().enqueue(object : Callback<List<Store>> {
             override fun onResponse(call: Call<List<Store>>?, response: Response<List<Store>>?) {
                 if (response == null || response.isSuccessful.not()) {
@@ -53,7 +56,11 @@ class StoresRemoteDataSource : StoreDataSource {
         })
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         storesService.getStore(itemId).enqueue(object : Callback<Store> {
             override fun onResponse(call: Call<Store>?, response: Response<Store>?) {
                 val store = response?.body()
@@ -82,6 +89,10 @@ class StoresRemoteDataSource : StoreDataSource {
     }
 
     override fun deleteAll() {
+        // Not required
+    }
+
+    override fun saveBulkItems(vararg items: Store) {
         // Not required
     }
 }

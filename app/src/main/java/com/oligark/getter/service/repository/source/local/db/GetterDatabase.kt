@@ -1,10 +1,12 @@
-package com.oligark.getter.service.repository.source.local
+package com.oligark.getter.service.repository.source.local.db
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import com.oligark.getter.service.model.Business
+import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.model.User
 
@@ -18,8 +20,10 @@ import com.oligark.getter.service.model.User
 @Database(entities = arrayOf(
         User::class,
         Business::class,
-        Store::class
-), version = 2)
+        Store::class,
+        Offer::class
+), version = 3)
+@TypeConverters(Converters::class)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {
         @JvmStatic private val DB_NAME = "GetterDb.db"
@@ -43,4 +47,5 @@ abstract class GetterDatabase : RoomDatabase() {
     }
 
     abstract fun storeDao(): StoreDao
+    abstract fun offerDao(): OfferDao
 }

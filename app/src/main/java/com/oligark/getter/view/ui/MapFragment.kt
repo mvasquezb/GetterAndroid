@@ -19,9 +19,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.oligark.getter.R
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.model.*
+import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.BaseResource
+import com.oligark.getter.viewmodel.resources.Resource
 import java.lang.Exception
 
 /**
@@ -39,6 +41,10 @@ class MapFragment :
         @JvmField val PERMISSION_REQUEST_FINE_LOCATION = 51412
     }
 
+    interface OnStoreSelectCallback {
+        fun onStoreSelected(store: Store)
+    }
+
     private var mMap: GoogleMap? = null
     private var mLocationPermissionGranted = false
 
@@ -48,18 +54,24 @@ class MapFragment :
     private var mLocationCircle: Circle? = null
 
     private lateinit var storesViewModel: StoresViewModel
+    private lateinit var offerViewModel: OfferViewModel
+    private var mOnStoreSelectCallback: OnStoreSelectCallback? = null
 
-    override fun onActivityCreated(p0: Bundle?) {
-        super.onActivityCreated(p0)
+    override fun onActivityCreated(data: Bundle?) {
+        super.onActivityCreated(data)
 
         if (requestLocationPermission()) {
             locationClient = LocationServices.getFusedLocationProviderClient(activity)
         }
         storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
-    }
+        offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
 
-    override fun onStart() {
-        super.onStart()
+        try {
+            mOnStoreSelectCallback = activity as OnStoreSelectCallback
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "Activity does not implement ${OnStoreSelectCallback::class.java.simpleName}")
+        }
+
         getMapAsync(this)
     }
 
@@ -72,7 +84,7 @@ class MapFragment :
                     .position(LatLng(store.latitude, store.longitude))
                     .title(store.businessName)
             )
-            marker?.tag = store.businessId
+            marker?.tag = store
         }
     }
 
@@ -85,6 +97,7 @@ class MapFragment :
             PERMISSION_REQUEST_FINE_LOCATION -> {
                 if (grantResults.isNotEmpty()
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true
                     mapSetup()
                 } else {
                     Toast.makeText(
@@ -119,7 +132,6 @@ class MapFragment :
     }
 
     private fun mapSetup() {
-        Log.d(TAG, "Permission granted: $mLocationPermissionGranted")
         if (mLocationPermissionGranted) {
             mMap?.isMyLocationEnabled = true
 
@@ -131,12 +143,12 @@ class MapFragment :
             val layoutParams = locationButton.layoutParams as RelativeLayout.LayoutParams
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            layoutParams.setMargins(0, 0, 30, 30)
+            layoutParams.setMargins(0, 0, 20, 108)
         }
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                BaseResource.LoadState.SUCCESS -> {
-                    updateStoreMarkers(storesResource.stores)
+                Resource.LoadState.SUCCESS -> {
+                    updateStoreMarkers(storesResource.items)
                 }
                 else -> {}
             }
@@ -205,8 +217,9 @@ class MapFragment :
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        val businessId = marker.tag as Int
-        Toast.makeText(activity, "Marker tag: $businessId", Toast.LENGTH_LONG).show()
-        return false
+        val store = marker.tag as Store
+        Log.e(TAG, "StoreSelectCallback is null: ${mOnStoreSelectCallback == null}")
+        mOnStoreSelectCallback?.onStoreSelected(store)
+        return true
     }
 }
