@@ -1,6 +1,5 @@
 package com.oligark.getter.view.ui
 
-import android.arch.lifecycle.LifecycleActivity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -10,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
@@ -34,7 +34,7 @@ import com.oligark.getter.viewmodel.resources.Resource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
-class MainActivity : LifecycleActivity(), MapFragment.OnStoreSelectCallback {
+class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     companion object {
         @JvmField val TAG = MainActivity::class.java.simpleName
     }

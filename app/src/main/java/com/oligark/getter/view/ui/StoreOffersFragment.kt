@@ -1,11 +1,13 @@
 package com.oligark.getter.view.ui
 
+import android.app.ActionBar
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,6 +43,15 @@ class StoreOffersFragment : Fragment(), OfferAdapter.OnOfferSelectCallback {
             savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_store_offers, container, false)
+
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        val supportActionBar = (activity as AppCompatActivity).supportActionBar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.toolbar.setNavigationOnClickListener {
+            activity.onBackPressed()
+        }
 
         mStore = arguments.getParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY)
         offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
