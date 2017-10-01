@@ -27,6 +27,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
 }
 
 android {
@@ -115,6 +116,7 @@ dependencies {
     compile "com.squareup.moshi:moshi:$project.moshi"
     compile "com.squareup.moshi:moshi-kotlin:$project.moshi"
     compile "com.squareup.moshi:moshi-adapters:$project.moshi"
+    compile 'com.github.kenglxn.QRGen:android:2.3.0'
 
     testCompile 'junit:junit:4.12'
 }

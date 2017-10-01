@@ -1,11 +1,13 @@
 package com.oligark.getter.view.ui
 
 import android.app.ActionBar
+import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -13,20 +15,27 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.RelativeLayout
 import android.widget.Toast
 import com.oligark.getter.R
 import com.oligark.getter.databinding.FragmentStoreOffersBinding
+import com.oligark.getter.databinding.QrCodeOverlayBinding
 import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
+import com.oligark.getter.service.repository.source.api.BaseApi
+import com.oligark.getter.util.animate
 import com.oligark.getter.view.adapters.OfferAdapter
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.resources.Resource
 import com.squareup.picasso.Picasso
+import net.glxn.qrgen.android.QRCode
 
 /**
  * Created by pmvb on 17-09-30.
  */
 class StoreOffersFragment : Fragment(), OfferAdapter.OnOfferSelectCallback {
+
     companion object {
 
         val TAG = StoreOffersFragment::class.java.simpleName
@@ -71,6 +80,26 @@ class StoreOffersFragment : Fragment(), OfferAdapter.OnOfferSelectCallback {
     override fun onOfferSelected(offer: Offer) {
         // Generate QR code and show it in overlay
         Log.e(TAG, "Offer selected: ${offer.description}")
+        val qrOverlay = Dialog(activity, android.R.style.Theme_Light_NoTitleBar_Fullscreen)
+//        qrOverlay.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val qrBinding = DataBindingUtil.inflate<QrCodeOverlayBinding>(
+                LayoutInflater.from(context),
+                R.layout.qr_code_overlay,
+                binding.root as ViewGroup,
+                false
+        )
+        qrOverlay.setContentView(qrBinding.root)
+        qrOverlay.show()
+        qrBinding.qrCodeOfferDescription.text = offer.description
+        val qrCode = QRCode.from("${BaseApi.BASE_URL}/stores/${offer.storeId}/offers")
+                .withSize(250, 250)
+                .file()
+        Picasso.with(qrOverlay.context)
+                .load(qrCode)
+                .into(qrBinding.qrCode)
+        qrBinding.btnHideQrCode.setOnClickListener {
+            qrOverlay.hide()
+        }
     }
 
     private fun setupOfferList() {

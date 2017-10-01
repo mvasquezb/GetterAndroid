@@ -42,4 +42,5 @@
     <string name="empty_store_offers_list">No hay ofertas en esta tienda</string>
     <string name="store_offers_load_error">Ocurrió un error al cargar las ofertas de esta tienda</string>
     <string name="offer_date">Válido hasta el %s</string>
+    <string name="show_offer_qr_code">Muestra este código al empleado de la tienda para canjear esta oferta</string>
 </resources>
