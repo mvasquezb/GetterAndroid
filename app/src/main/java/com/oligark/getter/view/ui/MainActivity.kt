@@ -70,7 +70,7 @@ class MainActivity : LifecycleActivity(), MapFragment.OnStoreSelectCallback {
                 }
                 Resource.LoadState.SUCCESS -> {
                     hideProgress()
-                    // Assume MapFragment updates map markers
+                    // Update map markers in MapFragment
                 }
                 Resource.LoadState.ERROR -> {
                     hideProgress()
@@ -94,9 +94,7 @@ class MainActivity : LifecycleActivity(), MapFragment.OnStoreSelectCallback {
         // Show offers fragment
         Log.e(TAG, "Store selected: $store")
         val data = Bundle()
-        data.putInt("store_id", store.id)
-        data.putString("business_name", store.businessName)
-        data.putString("business_logo_url", store.businessLogoUrl)
+        data.putParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY, store)
 
         val storeOffers = StoreOffersFragment()
         storeOffers.arguments = data
