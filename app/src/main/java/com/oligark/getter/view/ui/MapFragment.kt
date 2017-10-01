@@ -41,6 +41,10 @@ class MapFragment :
         @JvmField val PERMISSION_REQUEST_FINE_LOCATION = 51412
     }
 
+    interface OnStoreSelectCallback {
+        fun onStoreSelected(store: Store)
+    }
+
     private var mMap: GoogleMap? = null
     private var mLocationPermissionGranted = false
 
@@ -51,6 +55,7 @@ class MapFragment :
 
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
+    private var mOnStoreSelectCallback: OnStoreSelectCallback? = null
 
     override fun onActivityCreated(data: Bundle?) {
         super.onActivityCreated(data)
@@ -60,52 +65,13 @@ class MapFragment :
         }
         storesViewModel = ViewModelProviders.of(activity).get(StoresViewModel::class.java)
         offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
-        offerViewModel.offers.observe(activity, Observer { offerResource ->
-            when (offerResource?.loadState) {
-                Resource.LoadState.LOADING -> {
-                    hideLoadError()
-                    showOfferLoadProgress()
-                }
-                Resource.LoadState.ERROR -> {
-                    hideOfferLoadProgress()
-                    showLoadError()
-                }
-                Resource.LoadState.SUCCESS -> {
-                    hideOfferLoadProgress()
-                    showOfferList(offerResource.items)
-                }
-                else -> {}
-            }
-        })
-    }
 
-    private fun showOfferList(items: List<Offer>) {
-        if (items.isNotEmpty()) {
-            Toast.makeText(activity, items.first().description, Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(activity, "No offers loaded", Toast.LENGTH_SHORT).show()
+        try {
+            mOnStoreSelectCallback = activity as OnStoreSelectCallback
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "Activity does not implement ${OnStoreSelectCallback::class.java.simpleName}")
         }
-    }
 
-    private fun hideLoadError() {
-        //
-    }
-
-    private fun showLoadError() {
-        Log.e(TAG, "Error loading store offers")
-        Toast.makeText(activity, "Error loading store offers", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun hideOfferLoadProgress() {
-        //
-    }
-
-    private fun showOfferLoadProgress() {
-        //
-    }
-
-    override fun onStart() {
-        super.onStart()
         getMapAsync(this)
     }
 
@@ -118,7 +84,7 @@ class MapFragment :
                     .position(LatLng(store.latitude, store.longitude))
                     .title(store.businessName)
             )
-            marker?.tag = store.id
+            marker?.tag = store
         }
     }
 
@@ -166,7 +132,6 @@ class MapFragment :
     }
 
     private fun mapSetup() {
-        Toast.makeText(activity, "Permission granted: $mLocationPermissionGranted", Toast.LENGTH_SHORT).show()
         if (mLocationPermissionGranted) {
             mMap?.isMyLocationEnabled = true
 
@@ -252,8 +217,9 @@ class MapFragment :
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        val businessId = marker.tag as Int
-        Toast.makeText(activity, "Marker tag: $businessId", Toast.LENGTH_LONG).show()
-        return false
+        val store = marker.tag as Store
+        Log.e(TAG, "StoreSelectCallback is null: ${mOnStoreSelectCallback == null}")
+        mOnStoreSelectCallback?.onStoreSelected(store)
+        return true
     }
 }

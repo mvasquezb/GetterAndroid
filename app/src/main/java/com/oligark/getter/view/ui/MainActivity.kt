@@ -27,13 +27,14 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.Resource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
-class MainActivity : LifecycleActivity() {
+class MainActivity : LifecycleActivity(), MapFragment.OnStoreSelectCallback {
     companion object {
         @JvmField val TAG = MainActivity::class.java.simpleName
     }
@@ -87,6 +88,28 @@ class MainActivity : LifecycleActivity() {
 
         setupSearchbar()
         setupDrawerMenu()
+    }
+
+    override fun onStoreSelected(store: Store) {
+        // Show offers fragment
+        Log.e(TAG, "Store selected: $store")
+        val data = Bundle()
+        data.putInt("store_id", store.id)
+        data.putString("business_name", store.businessName)
+        data.putString("business_logo_url", store.businessLogoUrl)
+
+        val storeOffers = StoreOffersFragment()
+        storeOffers.arguments = data
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
+                )
+                .add(R.id.store_offers_container, storeOffers)
+                .addToBackStack(null)
+                .commit()
+        offerViewModel.getStoreOffers(store.id)
+        Log.e(TAG, "StoreOffersFragment loaded")
     }
 
     private fun showProgress() {
