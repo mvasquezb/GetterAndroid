@@ -17,6 +17,7 @@ import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.resources.Resource
+import com.squareup.picasso.Picasso
 
 /**
  * Created by pmvb on 17-09-30.
@@ -41,6 +42,8 @@ class StoreOffersFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_store_offers, container, false)
 
         mStore = arguments.getParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY)
+
+        bindStore()
 
         offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
         binding.offerViewModel = offerViewModel
@@ -71,6 +74,14 @@ class StoreOffersFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun bindStore() {
+        binding.offerListBusinessName.text = mStore.businessName
+        Picasso.with(activity)
+                .load(mStore.businessLogoUrl)
+                .placeholder(R.drawable.getter_logo)
+                .into(binding.offerListBusinessLogo)
     }
 
     private fun showOfferList(items: List<Offer>) {
