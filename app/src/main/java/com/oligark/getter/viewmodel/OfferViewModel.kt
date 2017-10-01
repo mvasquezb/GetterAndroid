@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.repository.OfferRepository
 import com.oligark.getter.service.repository.source.DataSource
-import com.oligark.getter.service.repository.source.OfferDataSource
 import com.oligark.getter.service.repository.source.local.OfferLocalDataSource
 import com.oligark.getter.service.repository.source.local.db.GetterDatabase
 import com.oligark.getter.service.repository.source.remote.OfferRemoteDataSource
@@ -32,7 +31,7 @@ class OfferViewModel(
             OfferRemoteDataSource()
     )
 
-    fun getStoreOffers(storeId: Int) {
+    fun getStoreOffers(storeId: Int, active: Boolean? = null, forceUpdate: Boolean = false) {
         offers.value = Resource(listOf())
         offerRepository.getStoreOffers(storeId, object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
@@ -42,6 +41,6 @@ class OfferViewModel(
             override fun onDataNotAvailable() {
                 offers.value = Resource(listOf(), Resource.LoadState.ERROR)
             }
-        })
+        }, active, forceUpdate)
     }
 }
