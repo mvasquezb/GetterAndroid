@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.Toast
 import com.oligark.getter.R
 import com.oligark.getter.databinding.FragmentStoreOffersBinding
 import com.oligark.getter.service.model.Offer
+import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.resources.Resource
 
@@ -23,10 +25,13 @@ class StoreOffersFragment : Fragment() {
 
     companion object {
         val TAG = StoreOffersFragment::class.java.simpleName
+        val CURRENT_STORE_ARG_KEY = "current_store"
     }
 
     private lateinit var offerViewModel: OfferViewModel
     private lateinit var binding: FragmentStoreOffersBinding
+
+    private lateinit var mStore: Store
 
     override fun onCreateView(
             inflater: LayoutInflater?,
@@ -34,16 +39,24 @@ class StoreOffersFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_store_offers, container, false)
+
+        mStore = arguments.getParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY)
+
         offerViewModel = ViewModelProviders.of(activity).get(OfferViewModel::class.java)
+        binding.offerViewModel = offerViewModel
+
         offerViewModel.offers.observe(this, Observer { offerResource ->
             when (offerResource?.loadState) {
                 Resource.LoadState.LOADING -> {
-                    hideOfferLoadError()
-                    showOfferLoadProgress()
+                    hideOfferLoadMessage()
+                    if (!binding.offerListSwipeRefresh.isRefreshing) {
+                        showOfferLoadProgress()
+                    }
                 }
                 Resource.LoadState.ERROR -> {
+                    Log.e(TAG, "Ocurrió un error al cargar datos de la tienda: ${mStore.id}")
                     hideOfferLoadProgress()
-                    showOfferLoadError()
+                    showOfferLoadMessage(R.string.store_offers_load_error)
                 }
                 Resource.LoadState.SUCCESS -> {
                     hideOfferLoadProgress()
@@ -52,31 +65,45 @@ class StoreOffersFragment : Fragment() {
                 else -> {}
             }
         })
+
+        binding.offerListSwipeRefresh.setOnRefreshListener {
+            offerViewModel.getStoreOffers(mStore.id, forceUpdate = true)
+        }
+
         return binding.root
     }
 
     private fun showOfferList(items: List<Offer>) {
-        if (items.isNotEmpty()) {
-            Toast.makeText(activity, "${items.first().startDate} ${items.first().endDate}", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(activity, "No offers loaded", Toast.LENGTH_SHORT).show()
+        if (items.isEmpty()) {
+            showOfferLoadMessage(R.string.empty_store_offers_list)
+            return
         }
+        showOfferLoadMessage("${items.first().startDate} ${items.first().endDate}")
     }
 
-    private fun hideOfferLoadError() {
-        //
+    private fun showOfferLoadMessage(stringRes: Int) {
+        showOfferLoadMessage(getString(stringRes))
     }
 
-    private fun showOfferLoadError() {
-        Log.e(TAG, "Error loading store offers")
-        Toast.makeText(activity, "Error loading store offers", Toast.LENGTH_SHORT).show()
+    private fun showOfferLoadMessage(message: String) {
+        Log.e(TAG, "Showing load message: $message")
+        binding.offerListLoadMessage.visibility = View.VISIBLE
+        binding.offerListLoadMessage.text = message
+    }
+
+    private fun hideOfferLoadMessage() {
+        Log.e(TAG, "Hiding load message")
+        binding.offerListLoadMessage.visibility = View.GONE
     }
 
     private fun hideOfferLoadProgress() {
-        //
+        Log.e(TAG, "Hiding load progress bar")
+        binding.offerListProgress.visibility = View.GONE
+        binding.offerListSwipeRefresh.isRefreshing = false
     }
 
     private fun showOfferLoadProgress() {
-        //
+        Log.e(TAG, "Showing load progress bar")
+        binding.offerListProgress.visibility = View.VISIBLE
     }
 }
