@@ -41,4 +41,5 @@
     <string name="menu_item_filter">Filtrar</string>
     <string name="empty_store_offers_list">No hay ofertas en esta tienda</string>
     <string name="store_offers_load_error">Ocurrió un error al cargar las ofertas de esta tienda</string>
+    <string name="offer_date">Válido hasta el %s</string>
 </resources>
