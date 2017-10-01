@@ -33,14 +33,17 @@ class StoreRepository private constructor(
     private val cache = LinkedHashMap<Int, Store>()
     private var cacheIsDirty = false
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
-        if (cache.isNotEmpty() && !cacheIsDirty) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Store>,
+            forceUpdate: Boolean
+    ) {
+        if (cache.isNotEmpty() && !cacheIsDirty && !forceUpdate) {
             Log.e(TAG, "Cache not empty: ${cache.values}")
             callback.onItemsLoaded(cache.values.toList())
             return
         }
 
-        if (cacheIsDirty) {
+        if (cacheIsDirty || forceUpdate) {
             Log.e(TAG, "Getting items from remote source")
             getItemsFromRemoteDataSource(callback)
         } else {
@@ -84,20 +87,27 @@ class StoreRepository private constructor(
 
     private fun refreshLocalDataSource(items: List<Store>) {
         localDataSource.deleteAll()
-        items.forEach {
-            localDataSource.saveItem(it)
-        }
+        localDataSource.saveBulkItems(*items.toTypedArray())
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         Log.d(TAG, "Before getting item")
 
         val cached = cache[itemId]
-        if (cached != null && !cacheIsDirty) {
+        if (cached != null && !cacheIsDirty && !forceUpdate) {
             callback.onItemLoaded(cached)
             return
         }
         Log.d(TAG, "Before getting local item")
+
+        if (forceUpdate) {
+            getSingleRemoteItem(itemId, callback)
+            return
+        }
 
         // Load from alternate data sources
         localDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
@@ -108,18 +118,22 @@ class StoreRepository private constructor(
             }
 
             override fun onDataNotAvailable() {
-                remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
-                    override fun onItemLoaded(item: Store) {
-                        cache[item.id] = item
-                        Log.d(TAG, "Remote item loaded")
-                        callback.onItemLoaded(item)
-                    }
+                getSingleRemoteItem(itemId, callback)
+            }
+        })
+    }
 
-                    override fun onDataNotAvailable() {
-                        Log.d(TAG, "Remote data not available")
-                        callback.onDataNotAvailable()
-                    }
-                })
+    private fun getSingleRemoteItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+        remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Store> {
+            override fun onItemLoaded(item: Store) {
+                cache[item.id] = item
+                Log.d(TAG, "Remote item loaded")
+                callback.onItemLoaded(item)
+            }
+
+            override fun onDataNotAvailable() {
+                Log.d(TAG, "Remote data not available")
+                callback.onDataNotAvailable()
             }
         })
     }

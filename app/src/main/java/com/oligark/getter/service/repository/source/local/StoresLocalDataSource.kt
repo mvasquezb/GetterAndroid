@@ -10,16 +10,15 @@ import com.oligark.getter.util.AppExecutors
  * Local data source for stores
  * Potential for Dependency Injection (Singleton)
  */
-class StoresLocalDataSource : StoreDataSource {
-    private val storeDao: StoreDao
-    private var executors: AppExecutors
+class StoresLocalDataSource(
+        private val executors: AppExecutors,
+        private val storeDao: StoreDao
+) : StoreDataSource {
 
-    constructor(executors: AppExecutors, storeDao: StoreDao) {
-        this.executors = executors
-        this.storeDao = storeDao
-    }
-
-    override fun getItems(callback: DataSource.LoadItemsCallback<Store>) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         executors.diskIO.execute {
             val stores = storeDao.getStores()
             executors.mainThread.execute {
@@ -32,7 +31,11 @@ class StoresLocalDataSource : StoreDataSource {
         }
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Store>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Store>,
+            forceUpdate: Boolean
+    ) {
         executors.diskIO.execute {
             val store = storeDao.getStore(itemId)
             executors.mainThread.execute {

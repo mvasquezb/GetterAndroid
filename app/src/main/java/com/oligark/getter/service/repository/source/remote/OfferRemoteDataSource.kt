@@ -54,7 +54,9 @@ class OfferRemoteDataSource : OfferDataSource {
     override fun getStoreOffers(
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean?) {
+            active: Boolean?,
+            forceUpdate: Boolean
+    ) {
         offerService.getStoreOffers(storeId, active).enqueue(object : Callback<List<Offer>> {
             override fun onFailure(call: Call<List<Offer>>?, t: Throwable?) {
                 Log.e(TAG, "Offer API error: $t")
@@ -77,15 +79,26 @@ class OfferRemoteDataSource : OfferDataSource {
         })
     }
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<Offer>) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
         getOffersUtil(callback)
     }
 
-    override fun getActiveOffers(callback: DataSource.LoadItemsCallback<Offer>, active: Boolean) {
+    override fun getActiveOffers(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            active: Boolean,
+            forceUpdate: Boolean
+    ) {
         getOffersUtil(callback, active)
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Offer>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
         offerService.getOffer(itemId).enqueue(object : Callback<Offer> {
             override fun onFailure(call: Call<Offer>?, t: Throwable?) {
                 Log.e(TAG, "Offer API error: $t")

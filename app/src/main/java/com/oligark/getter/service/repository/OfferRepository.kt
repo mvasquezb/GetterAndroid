@@ -40,14 +40,20 @@ class OfferRepository private constructor(
     override fun getStoreOffers(
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean?
+            active: Boolean?,
+            forceUpdate: Boolean
     ) {
         val storeOffers = offerCache[storeId]
-        if (storeOffers != null && !cacheIsDirty) {
+        if (storeOffers != null && !cacheIsDirty && !forceUpdate) {
             Log.e(TAG, "StoreOffers loaded from cache")
             callback.onItemsLoaded(storeOffers.values.toList())
             return
         }
+        if (forceUpdate) {
+            getStoreOffersFromRemoteSource(storeId, callback, active)
+            return
+        }
+
         localDataSource.getStoreOffers(storeId, object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
                 Log.e(TAG, "StoreOffers loaded from local storage")
@@ -56,9 +62,9 @@ class OfferRepository private constructor(
             }
 
             override fun onDataNotAvailable() {
-                getStoreOffersFromRemoteSource(storeId, callback)
+                getStoreOffersFromRemoteSource(storeId, callback, active)
             }
-        })
+        }, active)
     }
 
     private fun getStoreOffersFromRemoteSource(
@@ -87,6 +93,7 @@ class OfferRepository private constructor(
     }
 
     private fun refreshLocalDataSource(items: List<Offer>) {
+        localDataSource.deleteAll()
         localDataSource.saveBulkItems(*items.toTypedArray())
     }
 
@@ -100,42 +107,68 @@ class OfferRepository private constructor(
         }
     }
 
-    override fun getActiveOffers(callback: DataSource.LoadItemsCallback<Offer>, active: Boolean) {
+    override fun getActiveOffers(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            active: Boolean,
+            forceUpdate: Boolean
+    ) {
+        if (forceUpdate) {
+            getRemoteActiveOffers(callback, active)
+            return
+        }
         localDataSource.getActiveOffers(object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
                 callback.onItemsLoaded(items)
             }
 
             override fun onDataNotAvailable() {
-                remoteDataSource.getItems(object : DataSource.LoadItemsCallback<Offer> {
-                    override fun onItemsLoaded(items: List<Offer>) {
-                        onRemoteLoadSuccess(items, callback)
-                    }
-
-                    override fun onDataNotAvailable() {
-                        callback.onDataNotAvailable()
-                    }
-                })
+                getRemoteActiveOffers(callback, active)
             }
         }, active)
     }
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<Offer>) {
+    private fun getRemoteActiveOffers(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            active: Boolean
+    ) {
+        remoteDataSource.getActiveOffers(object : DataSource.LoadItemsCallback<Offer> {
+            override fun onItemsLoaded(items: List<Offer>) {
+                onRemoteLoadSuccess(items, callback)
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
+            }
+        }, active)
+    }
+
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
+        if (forceUpdate) {
+            loadRemoteItems(callback)
+            return
+        }
         localDataSource.getItems(object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
                 callback.onItemsLoaded(items)
             }
 
             override fun onDataNotAvailable() {
-                remoteDataSource.getItems(object : DataSource.LoadItemsCallback<Offer> {
-                    override fun onItemsLoaded(items: List<Offer>) {
-                        onRemoteLoadSuccess(items, callback)
-                    }
+                loadRemoteItems(callback)
+            }
+        })
+    }
 
-                    override fun onDataNotAvailable() {
-                        callback.onDataNotAvailable()
-                    }
-                })
+    private fun loadRemoteItems(callback: DataSource.LoadItemsCallback<Offer>) {
+        remoteDataSource.getItems(object : DataSource.LoadItemsCallback<Offer> {
+            override fun onItemsLoaded(items: List<Offer>) {
+                onRemoteLoadSuccess(items, callback)
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
             }
         })
     }
@@ -148,23 +181,36 @@ class OfferRepository private constructor(
         callback.onItemsLoaded(items)
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Offer>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
+        if (forceUpdate) {
+            getSingleRemoteItem(itemId, callback)
+            return
+        }
+
         localDataSource.getItem(itemId, object : DataSource.GetItemCallback<Offer> {
             override fun onItemLoaded(item: Offer) {
                 callback.onItemLoaded(item)
             }
 
             override fun onDataNotAvailable() {
-                remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Offer> {
-                    override fun onItemLoaded(item: Offer) {
-                        Log.d(TAG, "Remote offer loaded: ${item.description}")
-                        callback.onItemLoaded(item)
-                    }
+                getSingleRemoteItem(itemId, callback)
+            }
+        })
+    }
 
-                    override fun onDataNotAvailable() {
-                        callback.onDataNotAvailable()
-                    }
-                })
+    private fun getSingleRemoteItem(itemId: Int, callback: DataSource.GetItemCallback<Offer>) {
+        remoteDataSource.getItem(itemId, object : DataSource.GetItemCallback<Offer> {
+            override fun onItemLoaded(item: Offer) {
+                Log.d(TAG, "Remote offer loaded: ${item.description}")
+                callback.onItemLoaded(item)
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
             }
         })
     }

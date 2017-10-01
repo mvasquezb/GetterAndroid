@@ -14,9 +14,9 @@ interface DataSource<T> {
         fun onDataNotAvailable()
     }
 
-    fun getItems(callback: LoadItemsCallback<T>)
+    fun getItems(callback: LoadItemsCallback<T>, forceUpdate: Boolean = false)
 
-    fun getItem(itemId: Int, callback: GetItemCallback<T>)
+    fun getItem(itemId: Int, callback: GetItemCallback<T>, forceUpdate: Boolean = false)
 
     fun refreshItems()
 

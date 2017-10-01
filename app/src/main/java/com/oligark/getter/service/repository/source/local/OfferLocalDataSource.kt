@@ -18,7 +18,10 @@ class OfferLocalDataSource : OfferDataSource {
         this.offerDao = offerDao
     }
 
-    override fun getItems(callback: DataSource.LoadItemsCallback<Offer>) {
+    override fun getItems(
+            callback: DataSource.LoadItemsCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
         executors.diskIO.execute {
             val offers = offerDao.getOffers()
             executors.mainThread.execute {
@@ -31,7 +34,11 @@ class OfferLocalDataSource : OfferDataSource {
         }
     }
 
-    override fun getItem(itemId: Int, callback: DataSource.GetItemCallback<Offer>) {
+    override fun getItem(
+            itemId: Int,
+            callback: DataSource.GetItemCallback<Offer>,
+            forceUpdate: Boolean
+    ) {
         executors.diskIO.execute {
             val offer = offerDao.getOffer(itemId)
             executors.mainThread.execute {
@@ -69,7 +76,8 @@ class OfferLocalDataSource : OfferDataSource {
     override fun getStoreOffers(
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean?
+            active: Boolean?,
+            forceUpdate: Boolean
     ) {
         executors.diskIO.execute {
             val offers = if (active == null) {
@@ -89,7 +97,8 @@ class OfferLocalDataSource : OfferDataSource {
 
     override fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean
+            active: Boolean,
+            forceUpdate: Boolean
     ) {
         executors.diskIO.execute {
             val offers = offerDao.getActiveOffers(active)
