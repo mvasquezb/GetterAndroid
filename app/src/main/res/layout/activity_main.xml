@@ -6,24 +6,34 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context="com.oligark.getter.view.ui.MainActivity">
 
-        <fragment
-            android:id="@+id/map"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.oligark.getter.view.ui.MainActivity"
-            android:name="com.oligark.getter.view.ui.MapFragment" />
+            android:layout_height="match_parent">
+            <fragment
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.oligark.getter.view.ui.MainActivity"
+                android:name="com.oligark.getter.view.ui.MapFragment" />
 
-        <com.arlib.floatingsearchview.FloatingSearchView
-            android:id="@+id/searchbar"
+            <com.arlib.floatingsearchview.FloatingSearchView
+                android:id="@+id/searchbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                app:floatingSearch_searchHint="@string/search_hint"
+                app:floatingSearch_leftActionMode="showHamburger"
+                app:floatingSearch_menu="@menu/menu_searchbar"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/store_offers_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingEnd="12dp"
-            android:paddingStart="12dp"
-            android:paddingTop="8dp"
-            app:floatingSearch_searchHint="@string/search_hint"
-            app:floatingSearch_leftActionMode="showHamburger"
-            app:floatingSearch_menu="@menu/menu_searchbar"/>
+            android:layout_height="match_parent"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
