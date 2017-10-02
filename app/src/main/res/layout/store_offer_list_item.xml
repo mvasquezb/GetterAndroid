@@ -28,7 +28,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/offer_get_button"
-        app:layout_constraintLeft_toRightOf="@+id/product_image">
+        app:layout_constraintLeft_toRightOf="@+id/product_image"
+        android:layout_marginLeft="16dp">
 
         <TextView
             android:id="@+id/offer_description"
