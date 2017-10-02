@@ -29,9 +29,10 @@ class OfferRemoteDataSource : OfferDataSource {
 
     private fun getOffersUtil(
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean? = null
+            active: Boolean? = null,
+            productInfo: Boolean = true
     ) {
-        offerService.getOffers(active).enqueue(object : Callback<List<Offer>> {
+        offerService.getOffers(active, productInfo).enqueue(object : Callback<List<Offer>> {
             override fun onFailure(call: Call<List<Offer>>?, t: Throwable?) {
                 Log.e(TAG, "API error: $t")
                 callback.onDataNotAvailable()
@@ -45,7 +46,6 @@ class OfferRemoteDataSource : OfferDataSource {
                     callback.onDataNotAvailable()
                     return
                 }
-                Log.e(TAG, "Offers: ${offers.first().description}")
                 callback.onItemsLoaded(offers)
             }
         })
@@ -55,9 +55,14 @@ class OfferRemoteDataSource : OfferDataSource {
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean?,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
-        offerService.getStoreOffers(storeId, active).enqueue(object : Callback<List<Offer>> {
+        offerService.getStoreOffers(
+                storeId,
+                active,
+                productInfo
+        ).enqueue(object : Callback<List<Offer>> {
             override fun onFailure(call: Call<List<Offer>>?, t: Throwable?) {
                 Log.e(TAG, "Offer API error: $t")
                 callback.onDataNotAvailable()
@@ -89,9 +94,10 @@ class OfferRemoteDataSource : OfferDataSource {
     override fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
-        getOffersUtil(callback, active)
+        getOffersUtil(callback, active, productInfo)
     }
 
     override fun getItem(

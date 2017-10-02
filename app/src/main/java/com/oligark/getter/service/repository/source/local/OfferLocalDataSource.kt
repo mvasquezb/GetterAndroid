@@ -77,6 +77,7 @@ class OfferLocalDataSource : OfferDataSource {
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean?,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
         executors.diskIO.execute {
@@ -98,6 +99,7 @@ class OfferLocalDataSource : OfferDataSource {
     override fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
         executors.diskIO.execute {

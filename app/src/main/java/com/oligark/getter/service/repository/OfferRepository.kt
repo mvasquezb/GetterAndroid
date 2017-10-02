@@ -41,6 +41,7 @@ class OfferRepository private constructor(
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean?,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
         val storeOffers = offerCache[storeId]
@@ -50,7 +51,7 @@ class OfferRepository private constructor(
             return
         }
         if (forceUpdate) {
-            getStoreOffersFromRemoteSource(storeId, callback, active)
+            getStoreOffersFromRemoteSource(storeId, callback, active, productInfo)
             return
         }
 
@@ -64,13 +65,14 @@ class OfferRepository private constructor(
             override fun onDataNotAvailable() {
                 getStoreOffersFromRemoteSource(storeId, callback, active)
             }
-        }, active)
+        }, active, productInfo, forceUpdate)
     }
 
     private fun getStoreOffersFromRemoteSource(
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean? = null
+            active: Boolean? = null,
+            productInfo: Boolean = true
     ) {
         remoteDataSource.getStoreOffers(storeId, object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
@@ -89,7 +91,7 @@ class OfferRepository private constructor(
                 Log.e(TAG, "Failed to load StoreOffers from remote storage")
                 callback.onDataNotAvailable()
             }
-        }, active)
+        }, active, productInfo)
     }
 
     private fun refreshLocalDataSource(items: List<Offer>) {
@@ -110,10 +112,11 @@ class OfferRepository private constructor(
     override fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean,
+            productInfo: Boolean,
             forceUpdate: Boolean
     ) {
         if (forceUpdate) {
-            getRemoteActiveOffers(callback, active)
+            getRemoteActiveOffers(callback, active, productInfo)
             return
         }
         localDataSource.getActiveOffers(object : DataSource.LoadItemsCallback<Offer> {
@@ -122,14 +125,15 @@ class OfferRepository private constructor(
             }
 
             override fun onDataNotAvailable() {
-                getRemoteActiveOffers(callback, active)
+                getRemoteActiveOffers(callback, active, productInfo)
             }
-        }, active)
+        }, active, productInfo, forceUpdate)
     }
 
     private fun getRemoteActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
-            active: Boolean
+            active: Boolean,
+            productInfo: Boolean
     ) {
         remoteDataSource.getActiveOffers(object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
@@ -139,7 +143,7 @@ class OfferRepository private constructor(
             override fun onDataNotAvailable() {
                 callback.onDataNotAvailable()
             }
-        }, active)
+        }, active, productInfo)
     }
 
     override fun getItems(

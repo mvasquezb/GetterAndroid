@@ -30,11 +30,17 @@ class Offer(
         val storeId: Int,
         @ColumnInfo(name = "offer_type")
         val offerType: Int,
-        val active: Boolean
+        val active: Boolean,
+        @ColumnInfo(name = "product_name")
+        val productName: String,
+        @ColumnInfo(name = "product_image_url")
+        val productImageUrl: String
 ) {
     fun hasSameContent(other: Offer): Boolean {
         return id == other.id && startDate == other.startDate && endDate == other.endDate &&
                 description == other.description && productId == other.productId &&
-                storeId == other.storeId && offerType == other.offerType && active == other.active
+                storeId == other.storeId && offerType == other.offerType &&
+                active == other.active && productName == other.productName &&
+                productImageUrl == other.productImageUrl
     }
 }

@@ -10,5 +10,7 @@ class OfferJson(
         val product_id: Int,
         val store_id: Int,
         val offer_type: Int,
-        val active: Boolean
+        val active: Boolean,
+        val product_name: String,
+        val product_image_url: String
 )

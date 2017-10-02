@@ -22,7 +22,7 @@ import com.oligark.getter.service.model.User
         Business::class,
         Store::class,
         Offer::class
-), version = 3)
+), version = 4)
 @TypeConverters(Converters::class)
 abstract class GetterDatabase : RoomDatabase() {
     companion object {

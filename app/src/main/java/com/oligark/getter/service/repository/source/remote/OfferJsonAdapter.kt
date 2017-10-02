@@ -17,7 +17,9 @@ class OfferJsonAdapter {
                 offer.product_id,
                 offer.store_id,
                 offer.offer_type,
-                offer.active
+                offer.active,
+                offer.product_name,
+                offer.product_image_url
         )
     }
 
@@ -30,7 +32,9 @@ class OfferJsonAdapter {
                 offer.productId,
                 offer.storeId,
                 offer.offerType,
-                offer.active
+                offer.active,
+                offer.productName,
+                offer.productImageUrl
         )
     }
 }

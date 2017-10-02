@@ -10,12 +10,14 @@ interface OfferDataSource : DataSource<Offer> {
             storeId: Int,
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean? = null,
+            productInfo: Boolean = true,
             forceUpdate: Boolean = false
     )
 
     fun getActiveOffers(
             callback: DataSource.LoadItemsCallback<Offer>,
             active: Boolean = true,
+            productInfo: Boolean = true,
             forceUpdate: Boolean = false
     )
 }
