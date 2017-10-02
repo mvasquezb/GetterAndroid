@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.oligark.getter.R
 import com.oligark.getter.service.model.Offer
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 
 /**
@@ -75,9 +76,9 @@ class OfferAdapter(
         val offerGetButton: ImageView = itemView.findViewById(R.id.offer_get_button)
 
         fun bind(offer: Offer) {
-//            Picasso.with(itemView.context)
-//                    .load(offer.productImageUrl)
-//                    .into(productImage)
+            Picasso.with(itemView.context)
+                    .load(offer.productImageUrl)
+                    .into(productImage)
             offerDescription.text = offer.description
             offerDate.text = itemView.context.getString(
                     R.string.offer_date,
