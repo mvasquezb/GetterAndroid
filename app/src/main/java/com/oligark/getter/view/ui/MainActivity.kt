@@ -30,7 +30,7 @@ import com.oligark.getter.databinding.ActivityMainBinding
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.Resource
+import com.oligark.getter.viewmodel.resources.DataResource
 import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 
@@ -65,14 +65,14 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         storesViewModel.init()
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                Resource.LoadState.LOADING -> {
+                DataResource.LoadState.LOADING -> {
                     showProgress()
                 }
-                Resource.LoadState.SUCCESS -> {
+                DataResource.LoadState.SUCCESS -> {
                     hideProgress()
                     // Update map markers in MapFragment
                 }
-                Resource.LoadState.ERROR -> {
+                DataResource.LoadState.ERROR -> {
                     hideProgress()
                     Toast.makeText(
                             this,
