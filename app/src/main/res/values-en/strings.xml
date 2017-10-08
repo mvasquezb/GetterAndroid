@@ -1,0 +1,24 @@
+<resources>
+    <string name="login_user_hint">User</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_login_btn">Login</string>
+    <string name="login_forgot_password_text">Forgot my password</string>
+    <string name="login_register_btn">Register</string>
+    <string name="login_guest_btn">Guest Login</string>
+    <string name="login_signin_with">Connect with…</string>
+
+    <string name="location_permission_rejected">Enable location services for a better experience</string>
+    <string name="search_hint">Search</string>
+    <string name="menu_item_preferences">Preferences</string>
+    <string name="menu_item_history">Getter History</string>
+    <string name="menu_item_about">About Getter</string>
+    <string name="menu_item_logout">Logout</string>
+    <string name="menu_item_filter">Filter</string>
+    <string name="empty_store_offers_list">This store has no active offers</string>
+    <string name="store_offers_load_error">Something went wrong while trying to load this store\'s offers</string>
+    <string name="offer_date">Valid until %s</string>
+    <string name="show_offer_qr_code">Show this code to a store employee to cash in this offer</string>
+    <string name="login_error_message">Something went wrong. Please try again</string>
+    <string name="login_invalid_user_message">There\'s no user registered with those credentials. Please try again</string>
+    <string name="login_user_collision_message">Login with your register provider (Twitter, FB, Google), then link your account with this one</string>
+</resources>

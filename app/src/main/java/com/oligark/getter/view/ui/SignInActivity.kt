@@ -114,7 +114,7 @@ class SignInActivity: AppCompatActivity() {
     }
 
     private fun onLoginError() {
-        Toast.makeText(this, "Ocurrió un error. Intente nuevamente", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.login_error_message), Toast.LENGTH_SHORT).show()
     }
 
     private fun onLoginCancelled() = onLoginComplete()
@@ -122,7 +122,7 @@ class SignInActivity: AppCompatActivity() {
     private fun handleUserCollision() {
         Toast.makeText(
                 this,
-                "Login with another provider, then link your account with this one",
+                getString(R.string.login_user_collision_message),
                 Toast.LENGTH_SHORT
         ).show()
     }
@@ -130,7 +130,7 @@ class SignInActivity: AppCompatActivity() {
     private fun handleInvalidUser() {
         Toast.makeText(
                 this,
-                "There's no user registered with those credentials. Please try again",
+                getString(R.string.login_invalid_user_message),
                 Toast.LENGTH_SHORT
         ).show()
     }

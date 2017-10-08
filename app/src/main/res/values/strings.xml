@@ -8,7 +8,7 @@
     <string name="twitter_consumer_key" translatable="false">2rQzkDkFl694CJ2jIBLBxyG36</string>
     <string name="twitter_consumer_secret" translatable="false">wciuBDzxrKa7bIYOuKi2ThiKu36INlDGXZjOl7s3Z2aRZeyfIS</string>
     <!-- Google App -->
-    <string name="google_web_client_id">988397032639-capicj30m8thad0bjq1r5s6bgvfh4ir2.apps.googleusercontent.com</string>
+    <string name="google_web_client_id" translatable="false">988397032639-capicj30m8thad0bjq1r5s6bgvfh4ir2.apps.googleusercontent.com</string>
 
 
     <string name="login_user_hint">Usuario</string>
@@ -31,7 +31,6 @@
     <string name="credits_flaticon_license_link">
         http://creativecommons.org/licenses/by/3.0
     </string>
-    <string name="title_activity_maps">Map</string>
     <string name="location_permission_rejected">Habilite el servicio de ubicación para una mejor experiencia</string>
     <string name="search_hint">Buscar</string>
     <string name="menu_item_preferences">Preferencias</string>
@@ -43,4 +42,7 @@
     <string name="store_offers_load_error">Ocurrió un error al cargar las ofertas de esta tienda</string>
     <string name="offer_date">Válido hasta el %s</string>
     <string name="show_offer_qr_code">Muestra este código al empleado de la tienda para canjear esta oferta</string>
+    <string name="login_error_message">Ocurrió un error. Intente nuevamente</string>
+    <string name="login_invalid_user_message">No existe un usuario con esas credenciales. Intente nuevamente</string>
+    <string name="login_user_collision_message">Ingrese con el proveedor (Twitter, FB, Google) con el que se registró, luego conecte su cuenta con este</string>
 </resources>
