@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     private fun startSignInActivity() {
         val signIn = Intent(this, SignInActivity::class.java)
         startActivity(signIn)
+        finish()
     }
 
     private fun setupDrawerMenu() {
