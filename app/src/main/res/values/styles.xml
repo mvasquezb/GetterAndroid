@@ -29,4 +29,8 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <style name="AppTheme.SignIn.ErrorMessage" parent="AppTheme">
+        <item name="android:textColor">@color/mainLogoColor</item>
+    </style>
+
 </resources>
