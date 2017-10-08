@@ -18,6 +18,7 @@ import com.oligark.getter.viewmodel.SignInViewModel
 import com.oligark.getter.viewmodel.SignInViewModel.Companion.RC_GOOGLE_SIGN_IN
 import com.oligark.getter.viewmodel.resources.SignInStateResource
 import com.oligark.getter.util.animate
+import com.oligark.getter.viewmodel.resources.EmailCredentialsState
 
 class SignInActivity: AppCompatActivity() {
 
@@ -89,6 +90,61 @@ class SignInActivity: AppCompatActivity() {
                 else -> {}
             }
         })
+
+        signInViewModel.emailCredentialsState.observe(this, Observer { state ->
+            when(state) {
+                EmailCredentialsState.VALID -> {
+                    clearInputErrors()
+                }
+                EmailCredentialsState.EMPTY_EMAIL -> {
+                    showEmailError(getString(R.string.signin_empty_email_error))
+                }
+                EmailCredentialsState.INVALID_EMAIL -> {
+                    showEmailError(getString(R.string.signin_invalid_email_error))
+                }
+                EmailCredentialsState.VALID_EMAIL -> {
+                    clearEmailErrors()
+                }
+                EmailCredentialsState.EMPTY_PASSWORD -> {
+                    showPasswordError(getString(R.string.signin_empty_password_error))
+                }
+                EmailCredentialsState.INVALID_PASSWORD -> {
+                    showPasswordError(getString(R.string.signin_invalid_password_error))
+                }
+                EmailCredentialsState.VALID_PASSWORD -> {
+                    clearPasswordErrors()
+                }
+            }
+        })
+    }
+
+    private fun showPasswordError(stringResource: Int) {
+        showPasswordError(getString(stringResource))
+    }
+
+    private fun showPasswordError(message: String) {
+        binding.loginPasswordWrapper.error = message
+    }
+
+    private fun showEmailError(stringResource: Int) {
+        showEmailError(getString(stringResource))
+    }
+
+    private fun showEmailError(message: String) {
+        binding.loginUserWrapper.error = message
+    }
+
+    private fun clearInputErrors() {
+        clearEmailErrors()
+        clearPasswordErrors()
+    }
+
+    private fun clearEmailErrors() {
+        binding.loginUserWrapper.error = null
+    }
+
+    private fun clearPasswordErrors() {
+        binding.loginPasswordWrapper.error = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
