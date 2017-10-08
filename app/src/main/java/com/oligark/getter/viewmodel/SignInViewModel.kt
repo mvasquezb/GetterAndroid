@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.*
 import com.oligark.getter.R
+import com.oligark.getter.viewmodel.resources.EmailCredentialsState
 import com.oligark.getter.viewmodel.resources.SignInStateResource
 import com.oligark.getter.viewmodel.resources.SignInStateResource.SignInState
 import com.twitter.sdk.android.core.*
@@ -51,11 +52,13 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
         buildTwitterClient()
     }
 
-    val signInState = MutableLiveData<SignInStateResource>()
     val googleSignInIntent: Intent by lazy {
         Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
     }
     var credential: AuthCredential? = null
+
+    val signInState = MutableLiveData<SignInStateResource>()
+    val emailCredentialsState = MutableLiveData<EmailCredentialsState>()
 
     fun init() {
         buildFacebookClient()
@@ -128,7 +131,13 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
                 mTwitterAuthClient.authorize(activity, object : Callback<TwitterSession>() {
                     override fun failure(exception: TwitterException?) {
                         Log.e(TAG, "Twitter exception", exception)
-                        onLoginError()
+                        try {
+                            throw exception ?: TwitterException("Default message")
+                        } catch (e: TwitterAuthException) {
+                            onLoginCancelled()
+                        } catch (e: TwitterApiException) {
+                            onLoginError()
+                        }
                     }
                     override fun success(result: Result<TwitterSession>) {
                         Log.d(TAG, "Twitter authorization success")
@@ -137,20 +146,24 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
                 })
             }
             SignInViewModel.SignInProvider.EMAIL -> {
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(user, pass)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "Email login success")
-                                onLoginSuccess()
-                            } else {
-                                Log.e(TAG, "Email login error", task.exception)
-                                try {
-                                    throw task.exception!!
-                                } catch (e: FirebaseAuthInvalidUserException) {
-                                    onInvalidUser()
+                if (validateEmailCredentials(user, pass)) {
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(user, pass)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(TAG, "Email login success")
+                                    onLoginSuccess()
+                                } else {
+                                    Log.e(TAG, "Email login error", task.exception)
+                                    try {
+                                        throw task.exception!!
+                                    } catch (e: FirebaseAuthInvalidUserException) {
+                                        onInvalidUser()
+                                    }
                                 }
                             }
-                        }
+                } else {
+                    onLoginCancelled()
+                }
             }
             SignInViewModel.SignInProvider.GUEST -> {
                 FirebaseAuth.getInstance().signInAnonymously()
@@ -165,6 +178,32 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
                         }
             }
         }
+    }
+
+    private fun validateEmailCredentials(user: String, pass: String): Boolean {
+        var valid = true
+
+        if (user.isEmpty()) {
+            emailCredentialsState.value = EmailCredentialsState.EMPTY_EMAIL
+            valid = false
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(user).matches()) {
+            emailCredentialsState.value = EmailCredentialsState.INVALID_EMAIL
+            valid = false
+        }else {
+            emailCredentialsState.value = EmailCredentialsState.VALID_PASSWORD
+        }
+
+        if (pass.isEmpty()) {
+            emailCredentialsState.value = EmailCredentialsState.EMPTY_PASSWORD
+            valid = false
+        } else {
+            emailCredentialsState.value = EmailCredentialsState.VALID_PASSWORD
+        }
+
+        if (valid) {
+            emailCredentialsState.value = EmailCredentialsState.VALID
+        }
+        return valid
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
