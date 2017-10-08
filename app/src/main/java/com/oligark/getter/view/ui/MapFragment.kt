@@ -19,11 +19,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.oligark.getter.R
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.model.*
-import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
-import com.oligark.getter.viewmodel.resources.Resource
+import com.oligark.getter.viewmodel.resources.DataResource
 import java.lang.Exception
 
 /**
@@ -147,7 +146,7 @@ class MapFragment :
         }
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
-                Resource.LoadState.SUCCESS -> {
+                DataResource.LoadState.SUCCESS -> {
                     updateStoreMarkers(storesResource.items)
                 }
                 else -> {}

@@ -10,7 +10,7 @@ import com.oligark.getter.service.repository.source.local.OfferLocalDataSource
 import com.oligark.getter.service.repository.source.local.db.GetterDatabase
 import com.oligark.getter.service.repository.source.remote.OfferRemoteDataSource
 import com.oligark.getter.util.AppExecutors
-import com.oligark.getter.viewmodel.resources.Resource
+import com.oligark.getter.viewmodel.resources.DataResource
 
 /**
  * Created by pmvb on 17-09-29.
@@ -22,7 +22,7 @@ class OfferViewModel(
         val TAG = OfferViewModel::class.java.simpleName
     }
 
-    val offers = MutableLiveData<Resource<Offer>>()
+    val offers = MutableLiveData<DataResource<Offer>>()
     private val offerRepository = OfferRepository.getInstance(
             OfferLocalDataSource(
                     AppExecutors(),
@@ -32,14 +32,14 @@ class OfferViewModel(
     )
 
     fun getStoreOffers(storeId: Int, active: Boolean? = null, forceUpdate: Boolean = false) {
-        offers.value = Resource(listOf())
+        offers.value = DataResource(listOf())
         offerRepository.getStoreOffers(storeId, object : DataSource.LoadItemsCallback<Offer> {
             override fun onItemsLoaded(items: List<Offer>) {
-                offers.value = Resource(items, Resource.LoadState.SUCCESS)
+                offers.value = DataResource(items, DataResource.LoadState.SUCCESS)
             }
 
             override fun onDataNotAvailable() {
-                offers.value = Resource(listOf(), Resource.LoadState.ERROR)
+                offers.value = DataResource(listOf(), DataResource.LoadState.ERROR)
             }
         }, active, forceUpdate)
     }

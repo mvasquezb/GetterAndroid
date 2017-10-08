@@ -1,33 +1,26 @@
 package com.oligark.getter.view.ui
 
-import android.app.ActionBar
 import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.RelativeLayout
-import android.widget.Toast
 import com.oligark.getter.R
 import com.oligark.getter.databinding.FragmentStoreOffersBinding
 import com.oligark.getter.databinding.QrCodeOverlayBinding
 import com.oligark.getter.service.model.Offer
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.service.repository.source.api.BaseApi
-import com.oligark.getter.util.animate
 import com.oligark.getter.view.adapters.OfferAdapter
 import com.oligark.getter.viewmodel.OfferViewModel
-import com.oligark.getter.viewmodel.resources.Resource
+import com.oligark.getter.viewmodel.resources.DataResource
 import com.squareup.picasso.Picasso
 import net.glxn.qrgen.android.QRCode
 
@@ -115,18 +108,18 @@ class StoreOffersFragment : Fragment(), OfferAdapter.OnOfferSelectCallback {
     private fun setupOfferObserver() {
         offerViewModel.offers.observe(this, Observer { offerResource ->
             when (offerResource?.loadState) {
-                Resource.LoadState.LOADING -> {
+                DataResource.LoadState.LOADING -> {
                     hideOfferLoadMessage()
                     if (!binding.offerListSwipeRefresh.isRefreshing) {
                         showOfferLoadProgress()
                     }
                 }
-                Resource.LoadState.ERROR -> {
+                DataResource.LoadState.ERROR -> {
                     Log.e(TAG, "Ocurrió un error al cargar datos de la tienda: ${mStore.id}")
                     hideOfferLoadProgress()
                     showOfferLoadMessage(R.string.store_offers_load_error)
                 }
-                Resource.LoadState.SUCCESS -> {
+                DataResource.LoadState.SUCCESS -> {
                     hideOfferLoadProgress()
                     showOfferList(offerResource.items)
                 }
