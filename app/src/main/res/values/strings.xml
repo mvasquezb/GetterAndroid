@@ -45,4 +45,8 @@
     <string name="login_error_message">Ocurrió un error. Intente nuevamente</string>
     <string name="login_invalid_user_message">No existe un usuario con esas credenciales. Intente nuevamente</string>
     <string name="login_user_collision_message">Ingrese con el proveedor (Twitter, FB, Google) con el que se registró, luego conecte su cuenta con este</string>
+    <string name="signin_empty_email_error">Ingresa tu correo</string>
+    <string name="signin_invalid_email_error">Ingresa un correo válido</string>
+    <string name="signin_empty_password_error">Ingresa tu contraseña</string>
+    <string name="signin_invalid_password_error">Ingresa una contraseña válida</string>
 </resources>

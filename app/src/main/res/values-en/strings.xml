@@ -21,4 +21,8 @@
     <string name="login_error_message">Something went wrong. Please try again</string>
     <string name="login_invalid_user_message">There\'s no user registered with those credentials. Please try again</string>
     <string name="login_user_collision_message">Login with your register provider (Twitter, FB, Google), then link your account with this one</string>
+    <string name="signin_empty_email_error">Enter your email</string>
+    <string name="signin_invalid_email_error">Enter a valid email</string>
+    <string name="signin_empty_password_error">Enter your password</string>
+    <string name="signin_invalid_password_error">Enter a valid password</string>
 </resources>
