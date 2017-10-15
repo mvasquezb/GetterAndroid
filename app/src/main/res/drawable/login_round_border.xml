@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <stroke android:width="1dp" android:color="@color/login_btn_color"/>
-    <solid android:color="@color/login_btn_color"/>
+    <stroke android:width="1dp" android:color="@color/loginButtonColor"/>
+    <solid android:color="@color/loginButtonColor"/>
     <padding
         android:top="1dp"
         android:right="1dp"
