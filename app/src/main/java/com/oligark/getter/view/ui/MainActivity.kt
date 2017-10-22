@@ -110,6 +110,20 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         Log.e(TAG, "StoreOffersFragment loaded")
     }
 
+    private fun showFiltersFragment() {
+        Log.d(TAG, "Before displaying filters fragment")
+        val filters = FiltersFragment()
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
+                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
+                )
+                .add(R.id.filters_container, filters)
+                .addToBackStack(null)
+                .commit()
+        Log.d(TAG, "FiltersFragment loaded")
+    }
+
     private fun showProgress() {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -195,6 +209,13 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     }
 
     private fun setupSearchbar() {
+        binding.searchbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.btn_menu_filter -> {
+                    showFiltersFragment()
+                }
+            }
+        }
         binding.searchbar.setOnQueryChangeListener { oldQuery, newQuery ->
             if (oldQuery.isNotEmpty() && newQuery.isEmpty()) {
                 binding.searchbar.clearSuggestions()

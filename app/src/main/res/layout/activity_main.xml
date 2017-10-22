@@ -36,5 +36,10 @@
             android:id="@+id/store_offers_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        <FrameLayout
+            android:id="@+id/filters_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
