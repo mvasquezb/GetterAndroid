@@ -8,9 +8,11 @@ import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
@@ -97,12 +99,10 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         data.putParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY, store)
 
         val storeOffers = StoreOffersFragment()
+        val slide = TransitionInflater.from(this).inflateTransition(R.transition.slide)
+        storeOffers.enterTransition = slide
         storeOffers.arguments = data
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
-                )
                 .add(R.id.store_offers_container, storeOffers)
                 .addToBackStack(null)
                 .commit()
@@ -113,11 +113,9 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     private fun showFiltersFragment() {
         Log.d(TAG, "Before displaying filters fragment")
         val filters = FiltersFragment()
+        val slide = TransitionInflater.from(this).inflateTransition(R.transition.slide)
+        filters.enterTransition = slide
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
-                )
                 .add(R.id.filters_container, filters)
                 .addToBackStack(null)
                 .commit()
@@ -216,6 +214,7 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
                 }
             }
         }
+        
         binding.searchbar.setOnQueryChangeListener { oldQuery, newQuery ->
             if (oldQuery.isNotEmpty() && newQuery.isEmpty()) {
                 binding.searchbar.clearSuggestions()
