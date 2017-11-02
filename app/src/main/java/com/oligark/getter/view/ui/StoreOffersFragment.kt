@@ -46,12 +46,12 @@ class StoreOffersFragment : Fragment(), OfferAdapter.OnOfferSelectCallback {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_store_offers, container, false)
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(binding.appbar.toolbar)
         val supportActionBar = (activity as AppCompatActivity).supportActionBar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        binding.toolbar.setNavigationOnClickListener {
+        binding.appbar.toolbar.setNavigationOnClickListener {
             activity.onBackPressed()
         }
 

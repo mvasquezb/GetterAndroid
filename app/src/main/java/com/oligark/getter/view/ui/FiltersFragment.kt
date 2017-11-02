@@ -3,6 +3,7 @@ package com.oligark.getter.view.ui
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,14 @@ class FiltersFragment : Fragment(), ProductCategoryAdapter.CategorySelectCallbac
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_filters, container, false)
 
+        (activity as AppCompatActivity).setSupportActionBar(binding.appbar.toolbar)
+        val supportActionBar = (activity as AppCompatActivity).supportActionBar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.appbar.toolbar.setNavigationOnClickListener {
+            activity.onBackPressed()
+        }
         setupCategoryItems()
         return binding.root
     }
