@@ -4,100 +4,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.constraint.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/darkGray">
+        android:fillViewport="true">
 
-        <LinearLayout
-            android:id="@+id/category_header_content"
-            android:layout_width="0dp"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="50dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp">
+            android:background="@color/darkGray">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_tags"
-                android:tint="@color/mainLogoColor"
-                android:contentDescription="@string/filter_category_icon_description" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/category_header_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/filter_category_header"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="20sp"/>
-        </LinearLayout>
-        <View
-            android:id="@+id/category_header_separator"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/category_header_content"
-            app:layout_constraintLeft_toLeftOf="@+id/category_header_content"
-            app:layout_constraintRight_toRightOf="@+id/category_header_content"
-            android:layout_marginTop="8dp"/>
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/category_items"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/category_header_separator"
-            app:layout_constraintLeft_toLeftOf="@id/category_header_separator"
-            app:layout_constraintRight_toRightOf="@id/category_header_separator"
-            android:layout_marginTop="12dp"
-            app:layoutManager="GridLayoutManager"
-            app:spanCount="3"
-            tools:listitem="@layout/filter_category_item">
-        </android.support.v7.widget.RecyclerView>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tags"
+                    android:tint="@color/mainLogoColor"
+                    android:contentDescription="@string/filter_category_icon_description" />
 
-        <LinearLayout
-            android:id="@+id/price_header_content"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/category_items"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_category_header"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+            <View
+                android:id="@+id/category_header_separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/category_header_content"
+                app:layout_constraintLeft_toLeftOf="@+id/category_header_content"
+                app:layout_constraintRight_toRightOf="@+id/category_header_content"
+                android:layout_marginTop="8dp"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_coin_stack"
-                android:tint="@color/mainLogoColor"
-                android:contentDescription="@string/filter_category_icon_description" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/category_items"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/filter_price_header"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="20sp"/>
-        </LinearLayout>
-        <View
-            android:id="@+id/price_header_separator"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/price_header_content"
-            app:layout_constraintLeft_toLeftOf="@+id/price_header_content"
-            app:layout_constraintRight_toRightOf="@+id/price_header_content"
-            android:layout_marginTop="8dp"/>
-    </android.support.constraint.ConstraintLayout>
+                app:layout_constraintTop_toBottomOf="@id/category_header_separator"
+                app:layout_constraintLeft_toLeftOf="@id/category_header_separator"
+                app:layout_constraintRight_toRightOf="@id/category_header_separator"
+                android:layout_marginTop="12dp"
+                app:layoutManager="GridLayoutManager"
+                app:spanCount="3"
+                tools:listitem="@layout/filter_category_item">
+            </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:id="@+id/price_header_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/category_items"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_coin_stack"
+                    android:tint="@color/mainLogoColor"
+                    android:contentDescription="@string/filter_category_icon_description" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_price_header"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+            <View
+                android:id="@+id/price_header_separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/price_header_content"
+                app:layout_constraintLeft_toLeftOf="@+id/price_header_content"
+                app:layout_constraintRight_toRightOf="@+id/price_header_content"
+                android:layout_marginTop="8dp"/>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 </layout>
