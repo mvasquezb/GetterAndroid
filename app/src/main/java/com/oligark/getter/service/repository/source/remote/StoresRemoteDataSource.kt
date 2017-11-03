@@ -34,19 +34,7 @@ class StoresRemoteDataSource : StoreDataSource {
     ) {
         storesService.getStores().enqueue(object : Callback<List<Store>> {
             override fun onResponse(call: Call<List<Store>>?, response: Response<List<Store>>?) {
-                if (response == null || response.isSuccessful.not()) {
-                    Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()}")
-                    callback.onDataNotAvailable()
-                    return
-                }
-                val stores = response.body()
-                if (stores == null) {
-                    Log.e(TAG, response.toString())
-                    callback.onDataNotAvailable()
-                    return
-                }
-                Log.e(TAG, response.toString())
-                callback.onItemsLoaded(stores)
+                storesListSuccess(callback, response)
             }
 
             override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
@@ -54,6 +42,25 @@ class StoresRemoteDataSource : StoreDataSource {
                 callback.onDataNotAvailable()
             }
         })
+    }
+
+    private fun storesListSuccess(
+            callback: DataSource.LoadItemsCallback<Store>,
+            response: Response<List<Store>>?
+    ) {
+        if (response == null || response.isSuccessful.not()) {
+            Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()}")
+            callback.onDataNotAvailable()
+            return
+        }
+        val stores = response.body()
+        if (stores == null) {
+            Log.e(TAG, response.toString())
+            callback.onDataNotAvailable()
+            return
+        }
+        Log.e(TAG, response.toString())
+        callback.onItemsLoaded(stores)
     }
 
     override fun getItem(
@@ -94,5 +101,21 @@ class StoresRemoteDataSource : StoreDataSource {
 
     override fun saveBulkItems(vararg items: Store) {
         // Not required
+    }
+
+    override fun filter(
+            callback: DataSource.LoadItemsCallback<Store>,
+            filters: HashMap<String, List<String>>
+    ) {
+        storesService.getStores(filters = filters).enqueue(object : Callback<List<Store>> {
+            override fun onResponse(call: Call<List<Store>>?, response: Response<List<Store>>?) {
+                storesListSuccess(callback, response)
+            }
+
+            override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
+                Log.e(TAG, "Exception: $t")
+                callback.onDataNotAvailable()
+            }
+        })
     }
 }

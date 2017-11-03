@@ -165,4 +165,34 @@ class StoreRepository private constructor(
 
         cache.clear()
     }
+
+    override fun filter(
+            callback: DataSource.LoadItemsCallback<Store>,
+            filters: HashMap<String, List<String>>
+    ) {
+        if (cache.isNotEmpty() && !cacheIsDirty) {
+            Log.e(TAG, "Cache not empty: ${cache.values}")
+            callback.onItemsLoaded(cache.values.toList())
+            return
+        }
+
+        if (cacheIsDirty) {
+            Log.e(TAG, "Getting items from remote source")
+            getItemsFromRemoteDataSource(callback)
+        } else {
+            localDataSource.filter(object : DataSource.LoadItemsCallback<Store> {
+                override fun onItemsLoaded(items: List<Store>) {
+                    Log.d(TAG, "Items loaded from local storage")
+                    Log.d(TAG, "Items: ${items.size} - $items")
+                    refreshCache(items)
+                    callback.onItemsLoaded(cache.values.toList())
+                }
+
+                override fun onDataNotAvailable() {
+                    Log.e(TAG, "Items loaded from remote storage")
+                    getItemsFromRemoteDataSource(callback)
+                }
+            }, filters = filters)
+        }
+    }
 }

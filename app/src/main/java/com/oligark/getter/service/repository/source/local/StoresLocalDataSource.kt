@@ -69,4 +69,12 @@ class StoresLocalDataSource(
             storeDao.deleteAll()
         }
     }
+
+    // Don't filter for now, just return local items
+    override fun filter(
+            callback: DataSource.LoadItemsCallback<Store>,
+            filters: HashMap<String, List<String>>
+    ) {
+        getItems(callback)
+    }
 }
