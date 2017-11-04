@@ -6,33 +6,29 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/item_container">
+        android:id="@+id/item_container"
+        android:background="@drawable/login_secondary_btn_border">
 
         <RelativeLayout
             android:id="@+id/image_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="16dp"
+            android:background="@drawable/filter_category_item"
+            android:padding="8dp">
 
-            <RelativeLayout
-                android:id="@+id/c1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/filter_category_item"
-                android:padding="8dp">
-                <ImageView
-                    android:id="@+id/category_item_img"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    tools:src="@drawable/getter_logo"
-                    android:scaleType="centerCrop"/>
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/category_item_img"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                tools:src="@drawable/getter_logo"
+                android:scaleType="centerCrop"/>
         </RelativeLayout>
 
         <ImageView
