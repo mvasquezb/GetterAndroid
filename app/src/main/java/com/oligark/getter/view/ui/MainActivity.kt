@@ -29,7 +29,9 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.service.model.ProductCategory
 import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.FiltersViewModel
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.DataResource
@@ -50,6 +52,8 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
 
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
+
+    private lateinit var filtersViewModel: FiltersViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,9 +91,20 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         })
 
         offerViewModel = ViewModelProviders.of(this).get(OfferViewModel::class.java)
+        filtersViewModel = ViewModelProviders.of(this).get(FiltersViewModel::class.java)
+        filtersViewModel.filtersApplied.observe(this, Observer { applyFilters ->
+            if (applyFilters == true) {
+                filterStores(filtersViewModel.selectedProductCategories.values)
+            }
+        })
+        filtersViewModel.init()
 
         setupSearchbar()
         setupDrawerMenu()
+    }
+
+    private fun filterStores(selectedCategories: Collection<ProductCategory>) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onStoreSelected(store: Store) {

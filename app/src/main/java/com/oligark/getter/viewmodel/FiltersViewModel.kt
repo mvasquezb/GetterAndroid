@@ -6,9 +6,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.oligark.getter.service.model.ProductCategory
 import com.oligark.getter.service.repository.ProductCategoryRepository
 import com.oligark.getter.service.repository.source.DataSource
-import com.oligark.getter.service.repository.source.local.StoresLocalDataSource
 import com.oligark.getter.service.repository.source.remote.ProductCategoryRemoteDataSource
-import com.oligark.getter.service.repository.source.remote.StoresRemoteDataSource
 import com.oligark.getter.viewmodel.resources.DataResource
 
 /**
@@ -27,23 +25,38 @@ class FiltersViewModel(application: Application) : AndroidViewModel(application)
     )
 
     val productCategories = MutableLiveData<DataResource<ProductCategory>>()
-    val selectedProductCategories = MutableLiveData<HashMap<Int, ProductCategory>>()
+    val selectedProductCategories = HashMap<Int, ProductCategory>()
+    var filtersApplied = MutableLiveData<Boolean>()
 
     fun init() {
         productCategories.value = DataResource(listOf(), DataResource.LoadState.LOADING)
         productCategoryRepository.getItems(object : DataSource.LoadItemsCallback<ProductCategory> {
             override fun onItemsLoaded(items: List<ProductCategory>) {
-                productCategories.value = DataResource(items, DataResource.LoadState.SUCCESS)
+                productCategories.value = DataResource(items.slice(1..3), DataResource.LoadState.SUCCESS)
             }
             override fun onDataNotAvailable() {
                 productCategories.value = DataResource(listOf(), DataResource.LoadState.ERROR)
             }
         })
+
+        filtersApplied.value = false
     }
 
     fun selectCategory(category: ProductCategory) {
-        val selectedCategories = selectedProductCategories.value
-        selectedCategories?.put(category.id, category)
-        selectedProductCategories.value = selectedCategories
+        val selectedCategories = selectedProductCategories
+        if (selectedProductCategories.contains(category.id)) {
+            selectedCategories.remove(category.id)
+        } else {
+            selectedProductCategories.put(category.id, category)
+        }
+    }
+
+    fun clearAll() {
+        filtersApplied.value = false
+        selectedProductCategories.clear()
+    }
+
+    fun applyFilters() {
+        filtersApplied.value = true
     }
 }
