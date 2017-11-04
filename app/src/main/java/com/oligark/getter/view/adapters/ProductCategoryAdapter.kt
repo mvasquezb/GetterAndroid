@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso
  * Created by pmvb on 17-11-01.
  */
 class ProductCategoryAdapter(
-        private var categories: List<ProductCategory>,
+        private var categories: List<ProductCategoryWrapper>,
         private var categorySelectCallback: ProductCategoryAdapter.CategorySelectCallback
 ) : RecyclerView.Adapter<ProductCategoryAdapter.ViewHolder>() {
 
@@ -41,30 +41,9 @@ class ProductCategoryAdapter(
 
     override fun getItemCount(): Int = categories.size
 
-    fun setCategories(categoryList: List<ProductCategory>) {
-        if (categories.isEmpty()) {
-            categories = categoryList
-            notifyItemRangeInserted(0, categoryList.size)
-            return
-        }
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun areItemsTheSame(
-                    oldItemPosition: Int,
-                    newItemPosition: Int
-            ): Boolean = categories[oldItemPosition].id == categoryList[newItemPosition].id
-
-            override fun getOldListSize(): Int = categories.size
-
-            override fun getNewListSize(): Int = categoryList.size
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldOffer = categories[oldItemPosition]
-                val newOffer = categoryList[newItemPosition]
-                return oldOffer.hasSameContent(newOffer)
-            }
-        })
+    fun setCategories(categoryList: List<ProductCategoryWrapper>) {
         categories = categoryList
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -72,15 +51,16 @@ class ProductCategoryAdapter(
         val categoryName = itemView.findViewById<TextView>(R.id.category_item_name)
         val categoryImage = itemView.findViewById<ImageView>(R.id.category_item_img)
 
-        fun bind(category: ProductCategory) {
-            Picasso.with(itemView.context).load(category.imageUrl).into(categoryImage)
-            categoryName.text = category.name
+        fun bind(categoryWrapper: ProductCategoryWrapper) {
+            Picasso.with(itemView.context).load(categoryWrapper.category.imageUrl).into(categoryImage)
+            categoryName.text = categoryWrapper.category.name
+            checked.visibility = if (categoryWrapper.selected) View.VISIBLE else View.GONE
             itemView.setOnClickListener {
                 when (checked.visibility) {
                     View.GONE -> checked.visibility = View.VISIBLE
                     View.VISIBLE -> checked.visibility = View.GONE
                 }
-                categorySelectCallback.onCategorySelected(category)
+                categorySelectCallback.onCategorySelected(categoryWrapper.category)
             }
         }
     }
