@@ -8,14 +8,15 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:src="@drawable/getter_text"/>
+                android:src="@drawable/getter_text"
+                android:contentDescription="@string/getter_logo_description"/>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

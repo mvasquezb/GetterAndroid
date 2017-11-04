@@ -53,4 +53,6 @@
     <string name="filter_category_icon_description">Etiquetas</string>
     <string name="filter_price_header">Precio</string>
     <string name="filter_apply_btn">Filtrar</string>
+    <string name="getter_logo_description">Getter Logo</string>
+    <string name="menu_item_reset_filters">Cancelar</string>
 </resources>
