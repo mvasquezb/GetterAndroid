@@ -52,4 +52,5 @@
     <string name="filter_category_header">Categorías</string>
     <string name="filter_category_icon_description">Etiquetas</string>
     <string name="filter_price_header">Precio</string>
+    <string name="filter_apply_btn">Filtrar</string>
 </resources>

@@ -23,7 +23,8 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/darkGray">
+                android:background="@color/darkGray"
+                android:paddingBottom="56dp">
 
                 <LinearLayout
                     android:id="@+id/category_header_content"
@@ -117,5 +118,15 @@
                     android:layout_marginTop="8dp"/>
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/filter_apply_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="4dp"
+            android:layout_gravity="bottom|center"
+            android:text="@string/filter_apply_btn" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>
