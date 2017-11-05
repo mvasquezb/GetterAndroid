@@ -73,7 +73,7 @@ class StoresLocalDataSource(
     // Don't filter for now, just return local items
     override fun filter(
             callback: DataSource.LoadItemsCallback<Store>,
-            filters: HashMap<String, List<String>>
+            filters: Map<String, List<String>>
     ) {
         getItems(callback)
     }

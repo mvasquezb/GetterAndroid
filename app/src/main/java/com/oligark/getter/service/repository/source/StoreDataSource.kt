@@ -8,6 +8,6 @@ import com.oligark.getter.service.model.Store
 interface StoreDataSource : DataSource<Store> {
     fun filter(
             callback: DataSource.LoadItemsCallback<Store>,
-            filters: HashMap<String, List<String>>
+            filters: Map<String, List<String>>
     )
 }

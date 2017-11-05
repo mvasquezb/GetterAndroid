@@ -49,7 +49,7 @@ class StoresRemoteDataSource : StoreDataSource {
             response: Response<List<Store>>?
     ) {
         if (response == null || response.isSuccessful.not()) {
-            Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()}")
+            Log.e(TAG, "Response unsuccessful: ${response?.code()} - ${response?.message()} - ${response?.raw()?.request()?.url()}")
             callback.onDataNotAvailable()
             return
         }
@@ -105,17 +105,22 @@ class StoresRemoteDataSource : StoreDataSource {
 
     override fun filter(
             callback: DataSource.LoadItemsCallback<Store>,
-            filters: HashMap<String, List<String>>
+            filters: Map<String, List<String>>
     ) {
-        storesService.getStores(filters = filters).enqueue(object : Callback<List<Store>> {
-            override fun onResponse(call: Call<List<Store>>?, response: Response<List<Store>>?) {
-                storesListSuccess(callback, response)
-            }
+        storesService.getStores(categories = filters["categories"]).enqueue(
+                object : Callback<List<Store>> {
+                    override fun onResponse(
+                            call: Call<List<Store>>?,
+                            response: Response<List<Store>>?
+                    ) {
+                        storesListSuccess(callback, response)
+                    }
 
-            override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
-                Log.e(TAG, "Exception: $t")
-                callback.onDataNotAvailable()
-            }
-        })
+                    override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
+                        Log.e(TAG, "Exception: $t")
+                        callback.onDataNotAvailable()
+                    }
+                }
+        )
     }
 }

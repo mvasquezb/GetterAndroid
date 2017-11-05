@@ -14,7 +14,8 @@ interface StoresService {
     @GET("api/stores")
     fun getStores(
             @Query("business_info") businessInfo: Boolean = true,
-            @QueryMap filters: HashMap<String, List<String>>? = null
+            @Query("category[]") categories: List<String>? = null,
+            @Query("price[]") price: List<String>? = null
     ): Call<List<Store>>
 
     @GET("api/business/{business}/stores")
