@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
 
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
-
     private lateinit var filtersViewModel: FiltersViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
@@ -68,7 +67,6 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         mUser = auth.currentUser!!
 
         storesViewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
-        storesViewModel.init()
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
                 DataResource.LoadState.LOADING -> {
@@ -94,17 +92,20 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         filtersViewModel = ViewModelProviders.of(this).get(FiltersViewModel::class.java)
         filtersViewModel.filtersApplied.observe(this, Observer { applyFilters ->
             if (applyFilters == true) {
-                filterStores(filtersViewModel.selectedProductCategories.values)
+                filterStores(filtersViewModel.selectedProductCategories.values.toList())
             }
         })
+
+        // Initialize view models
+        storesViewModel.init()
         filtersViewModel.init()
 
         setupSearchbar()
         setupDrawerMenu()
     }
 
-    private fun filterStores(selectedCategories: Collection<ProductCategory>) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun filterStores(selectedCategories: List<ProductCategory>) {
+        storesViewModel.filterStores(selectedCategories)
     }
 
     override fun onStoreSelected(store: Store) {

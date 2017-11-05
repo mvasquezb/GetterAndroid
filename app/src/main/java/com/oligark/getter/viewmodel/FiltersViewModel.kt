@@ -32,7 +32,7 @@ class FiltersViewModel(application: Application) : AndroidViewModel(application)
         productCategories.value = DataResource(listOf(), DataResource.LoadState.LOADING)
         productCategoryRepository.getItems(object : DataSource.LoadItemsCallback<ProductCategory> {
             override fun onItemsLoaded(items: List<ProductCategory>) {
-                productCategories.value = DataResource(items.slice(1..3), DataResource.LoadState.SUCCESS)
+                productCategories.value = DataResource(items, DataResource.LoadState.SUCCESS)
             }
             override fun onDataNotAvailable() {
                 productCategories.value = DataResource(listOf(), DataResource.LoadState.ERROR)
