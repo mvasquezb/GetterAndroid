@@ -13,5 +13,6 @@ object CustomMoshi {
             .add(DateJsonAdapter())
             .add(StoreJsonAdapter())
             .add(OfferJsonAdapter())
+            .add(ProductCategoryJsonAdapter())
             .build()
 }

@@ -52,7 +52,8 @@ class ProductCategoryAdapter(
         val categoryImage = itemView.findViewById<ImageView>(R.id.category_item_img)
 
         fun bind(categoryWrapper: ProductCategoryWrapper) {
-            Picasso.with(itemView.context).load(categoryWrapper.category.imageUrl).into(categoryImage)
+            Picasso.with(itemView.context)
+                    .load(categoryWrapper.category.imageUrl).into(categoryImage)
             categoryName.text = categoryWrapper.category.name
             checked.visibility = if (categoryWrapper.selected) View.VISIBLE else View.GONE
             itemView.setOnClickListener {
