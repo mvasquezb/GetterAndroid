@@ -92,7 +92,10 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         filtersViewModel = ViewModelProviders.of(this).get(FiltersViewModel::class.java)
         filtersViewModel.filtersApplied.observe(this, Observer { applyFilters ->
             if (applyFilters == true) {
-                filterStores(filtersViewModel.selectedProductCategories.values.toList())
+                filterStores(
+                        filtersViewModel.selectedProductCategories.values.toList(),
+                        filtersViewModel.priceRange
+                )
             }
         })
 
@@ -104,8 +107,11 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         setupDrawerMenu()
     }
 
-    private fun filterStores(selectedCategories: List<ProductCategory>) {
-        storesViewModel.filterStores(selectedCategories)
+    private fun filterStores(
+            selectedCategories: List<ProductCategory>,
+            priceRange: Pair<Int?, Int?>
+    ) {
+        storesViewModel.filterStores(selectedCategories, priceRange)
     }
 
     override fun onStoreSelected(store: Store) {

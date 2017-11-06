@@ -7,7 +7,13 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.view.*
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.oligark.getter.R
 import com.oligark.getter.databinding.FragmentFiltersBinding
 import com.oligark.getter.service.model.ProductCategory
@@ -45,12 +51,25 @@ class FiltersFragment : Fragment(), ProductCategoryAdapter.CategorySelectCallbac
         filtersViewModel = ViewModelProviders.of(activity).get(FiltersViewModel::class.java)
 
         setupCategoryItems()
+        setupPriceRange()
         binding.filterApplyBtn.setOnClickListener {
             filtersViewModel.applyFilters()
             activity.onBackPressed()
         }
 
         return binding.root
+    }
+
+    private fun setupPriceRange() {
+        val maxRange = filtersViewModel.priceMaxValue - filtersViewModel.priceMinValue
+        binding.priceRangeBar.setSteps(maxRange.toFloat() / 100)
+        binding.priceRangeBar.setOnRangeSeekbarChangeListener { minValue, maxValue ->
+            binding.priceMinValue.text = "$minValue"
+            binding.priceMaxValue.text = "$maxValue"
+        }
+        binding.priceRangeBar.setOnRangeSeekbarFinalValueListener({ minValue, maxValue ->
+            filtersViewModel.updatePriceRange(minValue.toInt(), maxValue.toInt())
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -63,9 +82,16 @@ class FiltersFragment : Fragment(), ProductCategoryAdapter.CategorySelectCallbac
             R.id.btn_menu_reset_filters -> {
                 filtersViewModel.clearAll()
                 setCategories(filtersViewModel.productCategories.value?.items ?: listOf())
+                resetPriceRange()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun resetPriceRange() {
+        binding.priceRangeBar.setMinValue(filtersViewModel.priceMinValue.toFloat())
+        binding.priceRangeBar.setMaxValue(filtersViewModel.priceMaxValue.toFloat())
+        binding.priceRangeBar.invalidate()
     }
 
     private fun setupCategoryItems() {
