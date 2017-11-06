@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="AppTheme.StatusBar.Transparent" parent="AppTheme">
@@ -31,6 +32,10 @@
 
     <style name="AppTheme.SignIn.ErrorMessage" parent="AppTheme">
         <item name="android:textColor">@color/mainLogoColor</item>
+    </style>
+
+    <style name="AppTheme.Dark.ActionBar" parent="AppTheme">
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
 </resources>

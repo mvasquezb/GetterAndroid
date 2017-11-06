@@ -49,4 +49,12 @@
     <string name="signin_invalid_email_error">Ingresa un correo válido</string>
     <string name="signin_empty_password_error">Ingresa tu contraseña</string>
     <string name="signin_invalid_password_error">Ingresa una contraseña válida</string>
+    <string name="filter_category_header">Categorías</string>
+    <string name="filter_category_icon_description">Etiquetas</string>
+    <string name="filter_price_header">Precio</string>
+    <string name="filter_apply_btn">Filtrar</string>
+    <string name="getter_logo_description">Getter Logo</string>
+    <string name="menu_item_reset_filters">Cancelar</string>
+    <string name="filter_min_price_edit_btn_description">Editar precio mínimo</string>
+    <string name="filter_max_price_edit_btn_description">Editar precio máximo</string>
 </resources>

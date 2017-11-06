@@ -8,9 +8,11 @@ import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
@@ -27,7 +29,9 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.service.model.ProductCategory
 import com.oligark.getter.service.model.Store
+import com.oligark.getter.viewmodel.FiltersViewModel
 import com.oligark.getter.viewmodel.OfferViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.DataResource
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
 
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
+    private lateinit var filtersViewModel: FiltersViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +67,6 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         mUser = auth.currentUser!!
 
         storesViewModel = ViewModelProviders.of(this).get(StoresViewModel::class.java)
-        storesViewModel.init()
         storesViewModel.stores.observe(this, Observer { storesResource ->
             when (storesResource?.loadState) {
                 DataResource.LoadState.LOADING -> {
@@ -85,9 +89,29 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         })
 
         offerViewModel = ViewModelProviders.of(this).get(OfferViewModel::class.java)
+        filtersViewModel = ViewModelProviders.of(this).get(FiltersViewModel::class.java)
+        filtersViewModel.filtersApplied.observe(this, Observer { applyFilters ->
+            if (applyFilters == true) {
+                filterStores(
+                        filtersViewModel.selectedProductCategories.values.toList(),
+                        filtersViewModel.priceRange
+                )
+            }
+        })
+
+        // Initialize view models
+        storesViewModel.init()
+        filtersViewModel.init()
 
         setupSearchbar()
         setupDrawerMenu()
+    }
+
+    private fun filterStores(
+            selectedCategories: List<ProductCategory>,
+            priceRange: Pair<Int?, Int?>
+    ) {
+        storesViewModel.filterStores(selectedCategories, priceRange)
     }
 
     override fun onStoreSelected(store: Store) {
@@ -97,17 +121,27 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
         data.putParcelable(StoreOffersFragment.CURRENT_STORE_ARG_KEY, store)
 
         val storeOffers = StoreOffersFragment()
+        val slide = TransitionInflater.from(this).inflateTransition(R.transition.slide)
+        storeOffers.enterTransition = slide
         storeOffers.arguments = data
         supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom,
-                        R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom
-                )
                 .add(R.id.store_offers_container, storeOffers)
                 .addToBackStack(null)
                 .commit()
         offerViewModel.getStoreOffers(store.id)
         Log.e(TAG, "StoreOffersFragment loaded")
+    }
+
+    private fun showFiltersFragment() {
+        Log.d(TAG, "Before displaying filters fragment")
+        val filters = FiltersFragment()
+        val slide = TransitionInflater.from(this).inflateTransition(R.transition.slide)
+        filters.enterTransition = slide
+        supportFragmentManager.beginTransaction()
+                .add(R.id.filters_container, filters)
+                .addToBackStack(null)
+                .commit()
+        Log.d(TAG, "FiltersFragment loaded")
     }
 
     private fun showProgress() {
@@ -195,6 +229,14 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     }
 
     private fun setupSearchbar() {
+        binding.searchbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.btn_menu_filter -> {
+                    showFiltersFragment()
+                }
+            }
+        }
+        
         binding.searchbar.setOnQueryChangeListener { oldQuery, newQuery ->
             if (oldQuery.isNotEmpty() && newQuery.isEmpty()) {
                 binding.searchbar.clearSuggestions()

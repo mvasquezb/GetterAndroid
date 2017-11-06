@@ -55,6 +55,7 @@ class MapFragment :
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
     private var mOnStoreSelectCallback: OnStoreSelectCallback? = null
+    private var storeMarkers: List<Marker?> = listOf()
 
     override fun onActivityCreated(data: Bundle?) {
         super.onActivityCreated(data)
@@ -78,12 +79,16 @@ class MapFragment :
         if (mMap == null) {
             return
         }
-        stores.forEach { store ->
+        storeMarkers.forEach({ marker ->
+            marker?.remove()
+        })
+        storeMarkers = stores.map { store ->
             val marker = mMap?.addMarker(MarkerOptions()
                     .position(LatLng(store.latitude, store.longitude))
                     .title(store.businessName)
             )
             marker?.tag = store
+            marker
         }
     }
 
