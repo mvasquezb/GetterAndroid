@@ -45,10 +45,15 @@ class StoresViewModel(application: Application) : AndroidViewModel(application) 
         })
     }
 
-    fun filterStores(selectedCategories: List<ProductCategory>) {
+    fun filterStores(
+            selectedCategories: List<ProductCategory>,
+            priceRange: Pair<Int?, Int?>
+    ) {
         stores.value = DataResource(listOf(), DataResource.LoadState.LOADING)
+        val priceFilters = cleanPriceFilters(priceRange)
         val filters = mapOf(
-                "categories" to selectedCategories.map { it.slug }
+                "categories" to selectedCategories.map { it.slug },
+                "price" to priceFilters
         )
         storeRepository.filter(object : DataSource.LoadItemsCallback<Store> {
             override fun onItemsLoaded(items: List<Store>) {
@@ -59,5 +64,19 @@ class StoresViewModel(application: Application) : AndroidViewModel(application) 
                 stores.value = DataResource(listOf(), DataResource.LoadState.ERROR)
             }
         }, filters)
+    }
+
+    private fun cleanPriceFilters(priceRange: Pair<Int?, Int?>): List<String> {
+        val minPrice = if (priceRange.first != null && priceRange.second != null) {
+            ">${minOf(priceRange.first!!, priceRange.second!!)}"
+        } else {
+            ""
+        }
+        val maxPrice = if (priceRange.first != null && priceRange.second != null) {
+            "<${maxOf(priceRange.first!!, priceRange.second!!)}"
+        } else {
+            ""
+        }
+        return listOf(minPrice, maxPrice).filter { it.isBlank().not() }
     }
 }

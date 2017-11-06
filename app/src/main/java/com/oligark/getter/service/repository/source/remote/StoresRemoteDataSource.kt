@@ -55,7 +55,7 @@ class StoresRemoteDataSource : StoreDataSource {
         }
         val stores = response.body()
         if (stores == null) {
-            Log.e(TAG, response.toString())
+            Log.e(TAG, "Stores null: $response")
             callback.onDataNotAvailable()
             return
         }
@@ -107,20 +107,21 @@ class StoresRemoteDataSource : StoreDataSource {
             callback: DataSource.LoadItemsCallback<Store>,
             filters: Map<String, List<String>>
     ) {
-        storesService.getStores(categories = filters["categories"]).enqueue(
-                object : Callback<List<Store>> {
-                    override fun onResponse(
-                            call: Call<List<Store>>?,
-                            response: Response<List<Store>>?
-                    ) {
-                        storesListSuccess(callback, response)
-                    }
+        storesService.getStores(
+                categories = filters["categories"],
+                price = filters["price"]
+        ).enqueue(object : Callback<List<Store>> {
+            override fun onResponse(
+                    call: Call<List<Store>>?,
+                    response: Response<List<Store>>?
+            ) {
+                storesListSuccess(callback, response)
+            }
 
-                    override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
-                        Log.e(TAG, "Exception: $t")
-                        callback.onDataNotAvailable()
-                    }
-                }
-        )
+            override fun onFailure(call: Call<List<Store>>?, t: Throwable?) {
+                Log.e(TAG, "Exception: $t")
+                callback.onDataNotAvailable()
+            }
+        })
     }
 }
