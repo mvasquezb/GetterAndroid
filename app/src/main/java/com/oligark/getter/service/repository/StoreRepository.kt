@@ -24,7 +24,7 @@ class StoreRepository private constructor(
                 remoteDataSource: StoreDataSource
         ): StoreRepository {
             if (INSTANCE == null) {
-                INSTANCE = StoreRepository(localDataSource, remoteDataSource)
+                INSTANCE = StoreRepository(remoteDataSource, remoteDataSource)
             }
             return INSTANCE!!
         }

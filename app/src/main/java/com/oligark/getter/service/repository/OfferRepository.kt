@@ -24,7 +24,7 @@ class OfferRepository private constructor(
                 remoteDataSource: OfferDataSource
         ): OfferRepository {
             if (INSTANCE == null) {
-                INSTANCE = OfferRepository(localDataSource, remoteDataSource)
+                INSTANCE = OfferRepository(remoteDataSource, remoteDataSource)
             }
             return INSTANCE!!
         }
