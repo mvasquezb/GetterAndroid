@@ -16,6 +16,7 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
 import com.arlib.floatingsearchview.FloatingSearchView
+import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.auth.FirebaseAuth
@@ -29,10 +30,15 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.oligark.getter.R
 import com.oligark.getter.databinding.ActivityMainBinding
+import com.oligark.getter.search.model.OfferSearchSuggestion
+import com.oligark.getter.search.model.SearchResult
+import com.oligark.getter.search.model.StoreSearchSuggestion
+import com.oligark.getter.search.service.SearchCallback
 import com.oligark.getter.service.model.ProductCategory
 import com.oligark.getter.service.model.Store
 import com.oligark.getter.viewmodel.FiltersViewModel
 import com.oligark.getter.viewmodel.OfferViewModel
+import com.oligark.getter.viewmodel.SearchViewModel
 import com.oligark.getter.viewmodel.StoresViewModel
 import com.oligark.getter.viewmodel.resources.DataResource
 import com.squareup.picasso.Picasso
@@ -53,6 +59,7 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
     private lateinit var storesViewModel: StoresViewModel
     private lateinit var offerViewModel: OfferViewModel
     private lateinit var filtersViewModel: FiltersViewModel
+    private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +105,8 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
                 )
             }
         })
+
+        searchViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
 
         // Initialize view models
         storesViewModel.init()
@@ -255,7 +264,22 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
              */
             override fun onSearchAction(currentQuery: String) {
                 mLastQuery = currentQuery
-                // TODO("Load more results in background")
+                if (currentQuery.isEmpty()) {
+                    return
+                }
+                searchViewModel.searchStores(currentQuery, object : SearchCallback {
+                    override fun onSearchComplete(results: SearchResult) {
+                        onSearchSuccess(results)
+                    }
+
+                    override fun onSearchFailed() {
+                        Toast.makeText(
+                                applicationContext,
+                                "No se pudo completar la búsqueda",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
                 Log.d(TAG, "onSearchAction()")
             }
 
@@ -271,6 +295,22 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
                 Log.d(TAG, "onSuggestionClicked")
             }
         })
+
+        binding.searchbar.setOnBindSuggestionCallback {
+            suggestionView, leftIcon, textView, item, itemPosition ->
+
+            when (item) {
+                is StoreSearchSuggestion -> {
+
+                }
+                is OfferSearchSuggestion -> {
+
+                }
+                else -> {
+
+                }
+            }
+        }
 
         binding.searchbar.setOnFocusChangeListener(
                 object : FloatingSearchView.OnFocusChangeListener {
@@ -288,5 +328,18 @@ class MainActivity : AppCompatActivity(), MapFragment.OnStoreSelectCallback {
                     }
                 }
         )
+    }
+
+    private fun onSearchSuccess(results: SearchResult) {
+        val suggestions = buildSuggestions(results)
+        bindSuggestions(suggestions)
+    }
+
+    private fun buildSuggestions(results: SearchResult): List<SearchSuggestion> {
+        return listOf()
+    }
+
+    private fun bindSuggestions(suggestions: List<SearchSuggestion>) {
+        binding.searchbar.swapSuggestions(suggestions)
     }
 }
